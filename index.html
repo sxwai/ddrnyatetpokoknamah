@@ -768,37 +768,48 @@ function processImageWithGPSWatermark(file, callback){
             const lat = pos.coords.latitude;
             const lon = pos.coords.longitude;
             
-            // Default dinamis ke koordinat jika reverse geocoding gagal/offline
-            let locationName = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
-            let cityName = "Indonesia";
+            // Format koordinat dasar (misal: -6.91474, 107.60981)
+            const latLonStr = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+
+            let locationName = latLonStr; // Default ke koordinat jika alamat tidak ditemukan
+            let detailAddress = "Indonesia";
 
             try {
               const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
               const data = await res.json();
-              if(data && data.address){
+              
+              if (data && data.address) {
                 const addr = data.address;
-                const sub = addr.village || addr.suburb || addr.hamlet || addr.neighbourhood || addr.road || "";
-                const dist = addr.city_district || addr.town || addr.county || addr.municipality || "";
-                const city = addr.city || addr.state_district || addr.county || "";
-                const state = addr.state || "";
+                
+                // Ambil nomor rumah & nama jalan jika tersedia
+                const houseNumber = addr.house_number ? `No. ${addr.house_number}` : "";
+                const road = addr.road || addr.pedestrian || addr.suburb || "";
+                
+                // Ambil wilayah kelurahan/kecamatan/kota
+                const sub = addr.village || addr.hamlet || addr.neighbourhood || "";
+                const dist = addr.city_district || addr.town || addr.county || "";
+                const city = addr.city || addr.state_district || "";
 
-                if (sub && dist) {
-                  locationName = `${sub}, ${dist}`;
-                } else if (sub || dist) {
-                  locationName = sub || dist;
+                // Gabungkan Jalan + Nomor Rumah (Contoh: "Jl. Soekarno Hatta No. 45")
+                if (road) {
+                  locationName = houseNumber ? `${road} ${houseNumber}` : road;
                 }
 
-                if (city && state) {
-                  cityName = `${city}\n${state}`;
-                } else if (city || state) {
-                  cityName = city || state;
+                // Gabungkan Kelurahan/Kecamatan/Kota sebagai detail baris berikutnya
+                let details = [sub, dist, city].filter(Boolean);
+                if (details.length > 0) {
+                  detailAddress = details.join(", ");
                 }
               }
             } catch(err) {
-              console.log("Nominatim reverse geocode fallback used, using GPS coordinates");
+              console.log("Gagal memuat alamat detail, menggunakan koordinat GPS.");
             }
 
-            drawWatermark(canvas, ctx, locationName, cityName);
+            // Gabungkan koordinat GPS di bagian akhir teks agar bisa dilacak
+            const finalLine3 = `${detailAddress}\nGPS: ${latLonStr}`;
+
+            // Kirim ke pembuat watermark (Waktu, Nama Jalan/No Rumah, Wilayah + Koordinat)
+            drawWatermark(canvas, ctx, locationName, finalLine3);
             callback(canvas.toDataURL("image/jpeg", 0.9));
           },
           (err) => {
