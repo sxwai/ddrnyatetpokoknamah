@@ -698,7 +698,7 @@ function generateReports(){
   $("output-pasar").value=pasar.trim();
 
   let pakai=`*PEMAKAIAN DP, TELUR DAN GUDANG SHIFT ${shift} (${pos}) TGL ${tgl}*\n\n*PEMAKAIAN DP*\n`;
-  dpItems.forEach(item=>pakai+=`${item} : ${val(`dp-${item}`)||"-"}\n`);
+  dpItems.forEach(item=>pakai+=`${item} : ${val(`dp-${item}`)|inya||"-"}\n`);
   pakai+=`\n*PENGAMBILAN TELUR*\n${val("val-pengambilan-telur")||"-"} butir\n\n*PEMAKAIAN TELUR DADAR*\n${val("val-pemakaian-telur-dadar")||"-"} batch\n\n*SISA TELUR*\n${val("val-sisa-telur")||"-"} butir\n\n*PEMAKAIAN DAPUR BELAKANG*\nShift : ${shift.toLowerCase()} (${pos})\nTgl : ${tgl}\n\n*CEKER CRISPY*\nPemakaian : ${val("cc-pakai")||"-"} porsi\nProses : ${val("cc-proses")||"-"}\nSisa : ${val("cc-sisa")||"-"}\n\n*DAPUR DEPAN*\n\n*DADAR JAGUNG*\n${val("dd-batch")||"-"} batch\n\n*CEPLOK*\n${val("ceplok-val")||"-"}\n\n*GUDANG*\n${val("gudang-pemakaian-lain")||"-"}`;
   
   $("output-pemakaian").value=pakai;
@@ -750,7 +750,7 @@ function filterRows(inputId,rowSelector){
   }
 }
 
-// High-accuracy GPS & Timestamp Watermark Canvas Generator
+// High-accuracy GPS & Timestamp Watermark Canvas Generator (Dinamis Sesuai GPS)
 function processImageWithGPSWatermark(file, callback){
   const reader = new FileReader();
   reader.onload = function(e){
@@ -767,35 +767,48 @@ function processImageWithGPSWatermark(file, callback){
           async (pos) => {
             const lat = pos.coords.latitude;
             const lon = pos.coords.longitude;
-            let locationName = "Pakemitan,Kecamatan Cinambo";
-            let cityName = "Kota Bandung\nJawa Barat";
+            
+            // Default dinamis ke koordinat jika reverse geocoding gagal/offline
+            let locationName = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+            let cityName = "Indonesia";
 
             try {
               const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
               const data = await res.json();
               if(data && data.address){
-                const sub = data.address.village || data.address.suburb || data.address.neighbourhood || "Pakemitan";
-                const dist = data.address.city_district || data.address.town || data.address.county || "Kecamatan Cinambo";
-                const city = data.address.city || data.address.state || "Kota Bandung";
-                const state = data.address.state || "Jawa Barat";
-                locationName = `${sub}, ${dist}`;
-                cityName = `${city}\n${state}`;
+                const addr = data.address;
+                const sub = addr.village || addr.suburb || addr.hamlet || addr.neighbourhood || addr.road || "";
+                const dist = addr.city_district || addr.town || addr.county || addr.municipality || "";
+                const city = addr.city || addr.state_district || addr.county || "";
+                const state = addr.state || "";
+
+                if (sub && dist) {
+                  locationName = `${sub}, ${dist}`;
+                } else if (sub || dist) {
+                  locationName = sub || dist;
+                }
+
+                if (city && state) {
+                  cityName = `${city}\n${state}`;
+                } else if (city || state) {
+                  cityName = city || state;
+                }
               }
             } catch(err) {
-              console.log("Nominatim reverse geocode fallback used");
+              console.log("Nominatim reverse geocode fallback used, using GPS coordinates");
             }
 
             drawWatermark(canvas, ctx, locationName, cityName);
             callback(canvas.toDataURL("image/jpeg", 0.9));
           },
           (err) => {
-            drawWatermark(canvas, ctx, "Pakemitan,Kecamatan Cinambo", "Kota Bandung\nJawa Barat");
+            drawWatermark(canvas, ctx, "GPS Tidak Aktif / Ditolak", "Periksa Izin Lokasi");
             callback(canvas.toDataURL("image/jpeg", 0.9));
           },
           { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
         );
       } else {
-        drawWatermark(canvas, ctx, "Pakemitan,Kecamatan Cinambo", "Kota Bandung\nJawa Barat");
+        drawWatermark(canvas, ctx, "GPS Tidak Didukung", "Browser Error");
         callback(canvas.toDataURL("image/jpeg", 0.9));
       }
     };
@@ -887,7 +900,6 @@ async function downloadAllPhotosAsZip() {
 renderDynamicInputs();
 restoreState();
 
-// Fix: Memanggil fungsi updateClock secara instan saat inisialisasi
 updateClock();
 setInterval(updateClock, 1000);
 
