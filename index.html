@@ -511,27 +511,22 @@
 
 <script>
 const stokGroups = [
-  {title:"Bumbu & stok dapur belakang",items:[["BUMBU AIR","pcs"],["BUMBU GOANG","pcs"],["BUMBU MASTER","pcs"],["BUMBU NASI JERUK","pcs"],["BUMBU DADAR JAGUNG","pcs"],["TEPUNG BERAS","gr"],["TEPUNG CAKAR","gr"],["TELUR AYAM","pcs"],["MINYAK GORENG","gr"],["GARAM","gr"],["CABE MERAH","gr"],["CABE RAWIT","gr"],["BUNGA HIJAU","gr"],["KETUMBAR","gr"],["JINTAN","gr"],["KUNYIT","gr"],["KELAPA PARUT","gr"],["SANTAN KALENG","gr"]]},
-  {title:"Bagian minuman",items:[["CUP 14 POLOS","pcs"],["CUP OVAL 16","pcs"],["CUP OVAL 18 DDR","pcs"],["KNORR LIME","gr"],["SIRUP DELIFRU PANDAN","gr"],["NESTLE CREAMER","gr"],["KOEPOE PASTA 60 ML","pcs"],["TEH CELUP SOSRO","pcs"],["TEH 25 GRAM DSM","pcs"],["NESTEA GREEN TEA","pcs"],["NESTLE MILO 45 GR","pcs"]]},
-  {title:"Penyajian",items:[["DELMONTE EXTRAHOT","pcs"],["KERTAS PANJANG","pcs"],["KOTAK KARDUS DADAR BEREDAR","pcs"],["KRESEK BESAR PUTIH","pcs"],["POLYBAG 120 X 180","pcs"],["KRESEK KECIL UK 15","pcs"],["KRESEK KECIL UK 18","pcs"]]},
-  {title:"Depan",items:[["KECAP BANGO 1,5 L","gr"],["MAGIC LEZAT 1KG","gr"],["MINYAK SOVIA","gr"],["TELUR PER IKAT 15 KG",""],["SAOS TERIYAKI","gr"],["TEPUNG SYAZA","gr"],["SAUS BARBEQUE","gr"],["NASI","gr"]]},
-  {title:"Kasir",items:[["TEH PUCUK HARUM","pcs"],["LE MINERALE","pcs"],["KERUPUK PULI BERAS","pcs"],["KERUPUK PULI TEPUNG","pcs"],["KERUPUK KEDELAI","pcs"],["KERUPUK UYEL MAWAR","pcs"],["KERUPUK UDAN","pcs"]]}
+  {title:"Bumbu & stok dapur belakang",items:[["BUMBU AIR","pcs"],["BUMBU GOANG","pcs"],["BUMBU MASTER","pcs"],["BUMBU NASI JERUK","pcs"],["BUMBU DADAR JAGUNG","pcs"],["TEPUNG BERAS","gr"],["TEPUNG CAKRA","gr"],["BERAS SEDAP WANGI 25KG","gr"]]},
+  {title:"Bagian minuman",items:[["CUP 14 POLOS","pcs"],["CUP OVAL 16","pcs"],["CUP OVAL 18 DDR","pcs"],["KNORR LIME","gr"],["SIRUP DELIFRU PANDAN","gr"],["NESTLE CREAMER","gr"],["KOEPOE PASTA 60 ML","gr"],["GULA CAIR BTL","gr"],["SUSU CARNATION 365","gr"],["GARAM EKSPEDISI","gr"]]},
+  {title:"Bagian minuman (2)",items:[["TEH CELUP SOSRO","pcs"],["NESTLE MILO 45 GR","pcs"],["NESTEA GREEN TEA","pcs"],["TEH 25 GRAM DSM","pcs"]]},
+  {title:"Penyajian",items:[["DELMONTE EXTRAHOT","pcs"],["KERTAS PANJANG","pcs"],["KOTAK KARDUS DADAR BEREDAR","pcs"],["KRESEK BESAR PUTIH","pcs"],["POLYBAG 120 X 180","pcs"],["KRESEK KECIL UK 15","pcs"],["KRESEK 24","gr"]]},
+  {title:"Depan",items:[["KECAP BANGO 1,5 L","gr"],["MAGIC LEZAT 1KG","gr"],["MINYAK SOVIA","gr"],["TELUR PER IKAT 15 KG",""],["SAOS TERIYAKI","gr"],["TEPUNG SYAZA","gr"],["SAUS BARBEQUE","gr"],["NASI MAGIC COM","gr"],["SAMBAL GP","gr"],["SAMBAL MASTER","gr"]]},
+  {title:"Kasir",items:[["TEH PUCUK HARUM","pcs"],["LE MINERALE","pcs"],["KERUPUK PULI BERAS","pcs"],["KERUPUK PULI TEPUNG","pcs"],["KERUPUK KEDELAI","pcs"],["KERUPUK UYEL MAWAR","pcs"],["KERUPUK UDANG","pcs"],["KERUPUK RAMBAK","pcs"],["KERUPUK PASIR","pcs"],["KULIT KRISPI","pcs"],["USUS KRISPI","pcs"],["PEYEK KACANG","pcs"],["PEYEK UDANG REBON","pcs"]]}
 ];
-const flatStokList = [
-  "BUMBU AIR","BUMBU GOANG","BUMBU MASTER","BUMBU NASI JERUK","BUMBU DADAR JAGUNG","TEPUNG BERAS","TEPUNG CAKAR","TELUR AYAM","MINYAK GORENG","GARAM","CABE MERAH","CABE RAWIT","BUNGA HIJAU","KETUMBAR","JINTAN","KUNYIT","KELAPA PARUT","SANTAN KALENG",
-  "CUP 14 POLOS","CUP OVAL 16","CUP OVAL 18 DDR","KNORR LIME","SIRUP DELIFRU PANDAN","NESTLE CREAMER","KOEPOE PASTA 60 ML","TEH CELUP SOSRO","TEH 25 GRAM DSM","NESTEA GREEN TEA","NESTLE MILO 45 GR",
-  "DELMONTE EXTRAHOT","KERTAS PANJANG","KOTAK KARDUS DADAR BEREDAR","KRESEK BESAR PUTIH","POLYBAG 120 X 180","KRESEK KECIL UK 15","KRESEK KECIL UK 18",
-  "KECAP BANGO 1,5 L","MAGIC LEZAT 1KG","MINYAK SOVIA","TELUR PER IKAT 15 KG","SAOS TERIYAKI","TEPUNG SYAZA","SAUS BARBEQUE","NASI",
-  "TEH PUCUK HARUM","LE MINERALE","KERUPUK PULI BERAS","KERUPUK PULI TEPUNG","KERUPUK KEDELAI","KERUPUK UYEL MAWAR","KERUPUK UDAN"
-];
+const flatStokList = ["BUMBU AIR","BUMBU GOANG","BUMBU MASTER","CUP 14 POLOS","KERTAS PANJANG","KOTAK KARDUS DADAR BEREDAR","KRESEK BESAR PUTIH","LE MINERALE","MAGIC LEZAT 1KG","MINYAK SOVIA","PLASTIK SAMBEL","PLASTIK SEALER","SEDOTAN RUNCING PREMIUM","TEH PUCUK HARUM","TEPUNG BERAS","TEPUNG SYAZA","TEPUNG CAKRA","THERMAL 58X40","THERMAL 80X80","TISSUE BESAR LIVI","CUP OVAL 16","SEDOTAN BESAR BOBA","TEH CELUP SOSRO","NESTLE MILO 45 GR","SIRUP ABC COCOPANDAN 460ML","KECAP BANGO 1,5 L","GULA CAIR BTL","SUSU CARNATION 365","KRESEK KECIL UK 15","KRESEK 24","TELUR PER IKAT 15 KG","KOEPOE PASTA 60 ML","TEPUNG BERAS SANIA","GULA AREN","DELMONTE EXTRAHOT","BUMBU NASI JERUK","PAPER BAG POLOS","BERAS SEDAP WANGI 25KG","NESTLE CREAMER","NESTEA GREEN TEA","BUMBU DADAR JAGUNG","SIRUP DELIFRU PANDAN","POLYBAG 120 X 180","KNORR LIME","SAOS TERIYAKI","SOLASI 12 MM","TEH 25 GRAM DSM","GARAM EKSPEDISI","CUP OVAL 18 DDR","KERUPUK PULI BERAS","KERUPUK PULI TEPUNG","KERUPUK KEDELAI","KERUPUK UYEL MAWAR","KERUPUK UDANG","KERUPUK RAMBAK","KERUPUK PASIR","KULIT KRISPI","USUS KRISPI","PEYEK KACANG","PEYEK UDANG REBON","SAUS BARBEQUE","NASI MAGIC COM","SAMBAL GP","SAMBAL MASTER"];
 const pasarItems = [
-  ["CABE IJO LALAP","g"],["CABAI MERAH BESAR","g"],["BAWANG PUTIH KUPAS","g"],["BAWANG MERAH KUPAS","g"],["TOMAT MERAH","g"],["JAGUNG MANIS","g"],["DAUN BAWANG","g"],["SELADA AIR","g"],["BAWANG BOMBAY","g"],["LADA HITAM","g"],["WORTEL","g"],["KENTANG","g"]
+  ["CABE IJO LALAP","g"],["CABAI MERAH BESAR","g"],["BAWANG PUTIH KUPAS","g"],["BAWANG MERAH KUPAS","g"],["TOMAT MERAH","g"],["JAGUNG MANIS","g"],["DAUN BAWANG","g"],["SELADA AIR","g"],["BAWANG BOMBAY","g"],["DAUN SEREH","g"],["DAUN SALAM","g"],["CENDOL","g"],["JERUK NIPIS","g"],["LAOS MERAH","g"],["DAUN PISANG","g"],["CABE MERAH KECIL","g"],["DAUN JERUK","g"],["SELEDRI","g"],["SEMANGKA","kg"],["CINCAU","g"],["MELON","kg"],["DAUN PANDAN","g"],["KENCUR","g"],["NANGKA","g"]
 ];
 const dpItems = ["Cumi","Ceker","Kulit","A.suwir","Paru"];
 const itemUnit={}; stokGroups.forEach(g=>g.items.forEach(([n,u])=>itemUnit[n]=u));
 const groupedNames=new Set(stokGroups.flatMap(g=>g.items.map(i=>i[0])));
 const missing=flatStokList.filter(n=>!groupedNames.has(n));
-if(missing.length) stokGroups.push({title:"Item tambahan dari format laporan",items:missing.map(n=>[n,"pcs"]) });
+if(missing.length) stokGroups.push({title:"Item tambahan dari format laporan",items:missing.map(n=>[n,"pcs"])});
 
 const $=id=>document.getElementById(id);
 const storageKey="gudang-harian-neo-v5-gps";
@@ -630,7 +625,7 @@ function val(id){const el=$(id);return el && el.value.trim()!==""?el.value.trim(
 // Exact decimal conversion for grams to kg without rounding off
 function reportVal(id,unit=""){
   const v=val(id);
-  if(v=="")return "-";
+  if(v==="")return "-";
   const n=Number(v);
   if(!Number.isFinite(n))return v;
   if(unit==="g"||unit==="gr"){
@@ -649,25 +644,16 @@ function reportVal(id,unit=""){
 function updateClock(){
   const clockEl = $("clock-text");
   if(!clockEl) return;
-
-  const now = new Date();
+  const now=new Date();
   const days=["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
   const months=["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agt","Sep","Okt","Nov","Des"];
-  const timeString = new Intl.DateTimeFormat('id-ID', {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false,
-    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone || undefined
-  }).format(now);
-
-  clockEl.textContent = `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()} • ${timeString}`;
+  clockEl.textContent = `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()} • ${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}`;
 }
 
 function updateSummary(){
-  const count=flatStokList.filter(n=>val(`input-stok-${n}`)!="").length;
+  const count=flatStokList.filter(n=>val(`input-stok-${n}`)!=="").length;
   $("sum-stok").textContent=count;
-  const pcount=pasarItems.filter(([n])=>val(`pasar-${slug(n)}`)!="").length;
+  const pcount=pasarItems.filter(([n])=>val(`pasar-${slug(n)}`)!=="").length;
   $("sum-pasar").textContent=`${pcount}/${pasarItems.length}`;
   $("sum-foto").textContent=Object.keys(photosState).length;
 }
@@ -696,30 +682,26 @@ function switchTab(id){
 }
 
 function generateReports(){
-  const now=new Date();
-  const months=["JANUARI","FEBRUARI","MARET","APRIL","MEI","JUNI","JULI","AGUSTUS","SEPTEMBER","OKTOBER","NOVEMBER","DESEMBER"];
-  const tgl=`${now.getDate()}-${now.getMonth()+1}-${now.getFullYear()}`;
-  const shift = $("global-shift").value;
-  const pos = $("global-pos").value;
-
+  const now=new Date(),months=["JANUARI","FEBRUARI","MARET","APRIL","MEI","JUNI","JULI","AGUSTUS","SEPTEMBER","OKTOBER","NOVEMBER","DESEMBER"],tgl=`${now.getDate()}-${now.getMonth()+1}-${now.getFullYear()}`,shift=$("global-shift").value,pos=$("global-pos").value;
+  
   let stok=`SISA STOCK CLOSING SETIAP SHIFT ${months[now.getMonth()]} ${tgl} SHIFT ${shift} (POS: ${pos})*\n`;
   flatStokList.forEach(name=>{
     const unit=itemUnit[name]||"pcs";
-    stok += `${name} : ${reportVal(`input-stok-${name}`, unit === "gr" ? "gr" : unit)}\n`;
+    stok+=`${name} : ${reportVal(`input-stok-${name}`,unit==="gr"?"gr":unit)}\n`;
   });
   $("output-stok").value=stok.trim();
 
   let pasar=`SISA STOK ${pos}\n\n`;
   pasarItems.forEach(([name,unit])=>{
-    pasar += `${name} : ${reportVal(`pasar-${slug(name)}`,unit)}\n`;
+    pasar+=`${name} : ${reportVal(`pasar-${slug(name)}`,unit)}\n`;
   });
   $("output-pasar").value=pasar.trim();
 
   let pakai=`*PEMAKAIAN DP, TELUR DAN GUDANG SHIFT ${shift} (${pos}) TGL ${tgl}*\n\n*PEMAKAIAN DP*\n`;
-  dpItems.forEach(item=>pakai += `${item} : ${val(`dp-${item}`) || "-"}\n`);
-  pakai += `\n*PENGAMBILAN TELUR*\n${val("val-pengambilan-telur") || "-"} butir\n\n*PEMAKAIAN TELUR DADAR*\n${val("val-pemakaian-telur-dadar") || "-"} batch\n\n*SISA TELUR*\n${val("val-sisa-telur") || "-"} butir\n\n*PEMAKAIAN OPERASIONAL*\n${val("cc-pakai") || "-"} pakai, ${val("cc-proses") || "-"} proses, ${val("cc-sisa") || "-"} sisa\n\n*CEPLOK / DADAR JAGUNG*\n${val("dd-batch") || "-"} batch, ${val("ceplok-val") || "-"} ceplok\n\n*CATATAN GUDANG*\n${val("gudang-pemakaian-lain") || "-"}`;
+  dpItems.forEach(item=>pakai+=`${item} : ${val(`dp-${item}`)||"-"}\n`);
+  pakai+=`\n*PENGAMBILAN TELUR*\n${val("val-pengambilan-telur")||"-"} butir\n\n*PEMAKAIAN TELUR DADAR*\n${val("val-pemakaian-telur-dadar")||"-"} batch\n\n*SISA TELUR*\n${val("val-sisa-telur")||"-"} butir\n\n*PEMAKAIAN DAPUR BELAKANG*\nShift : ${shift.toLowerCase()} (${pos})\nTgl : ${tgl}\n\n*CEKER CRISPY*\nPemakaian : ${val("cc-pakai")||"-"} porsi\nProses : ${val("cc-proses")||"-"}\nSisa : ${val("cc-sisa")||"-"}\n\n*DAPUR DEPAN*\n\n*DADAR JAGUNG*\n${val("dd-batch")||"-"} batch\n\n*CEPLOK*\n${val("ceplok-val")||"-"}\n\n*GUDANG*\n${val("gudang-pemakaian-lain")||"-"}`;
+  
   $("output-pemakaian").value=pakai;
-
   saveState();
   switchTab("laporan");
   showModal("Berhasil!", "Semua laporan operasional berhasil dibuat dan diperbarui.", "🔥");
@@ -768,13 +750,7 @@ function filterRows(inputId,rowSelector){
   }
 }
 
-function formatCoordinate(value, suffix = ""){
-  const sign = value >= 0 ? suffix : suffix ? `${suffix} S` : "S";
-  const abs = Math.abs(value);
-  return `${abs.toFixed(5)}° ${sign}`.trim();
-}
-
-// High-accuracy GPS & Timestamp Watermark Canvas Generator (Dinamis Sesuai GPS)
+// High-accuracy GPS & Timestamp Watermark Canvas Generator
 function processImageWithGPSWatermark(file, callback){
   const reader = new FileReader();
   reader.onload = function(e){
@@ -791,48 +767,35 @@ function processImageWithGPSWatermark(file, callback){
           async (pos) => {
             const lat = pos.coords.latitude;
             const lon = pos.coords.longitude;
-            const coordText = `Koordinat: ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
-
-            let locationName = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
-            let cityName = "Indonesia";
+            let locationName = "Pakemitan,Kecamatan Cinambo";
+            let cityName = "Kota Bandung\nJawa Barat";
 
             try {
               const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
               const data = await res.json();
               if(data && data.address){
-                const addr = data.address;
-                const sub = addr.village || addr.suburb || addr.hamlet || addr.neighbourhood || addr.road || "";
-                const dist = addr.city_district || addr.town || addr.county || addr.municipality || "";
-                const city = addr.city || addr.state_district || addr.county || "";
-                const state = addr.state || "";
-
-                if (sub && dist) {
-                  locationName = `${sub}, ${dist}`;
-                } else if (sub || dist) {
-                  locationName = sub || dist;
-                }
-
-                if (city && state) {
-                  cityName = `${city}, ${state}`;
-                } else if (city || state) {
-                  cityName = city || state;
-                }
+                const sub = data.address.village || data.address.suburb || data.address.neighbourhood || "Pakemitan";
+                const dist = data.address.city_district || data.address.town || data.address.county || "Kecamatan Cinambo";
+                const city = data.address.city || data.address.state || "Kota Bandung";
+                const state = data.address.state || "Jawa Barat";
+                locationName = `${sub}, ${dist}`;
+                cityName = `${city}\n${state}`;
               }
             } catch(err) {
-              console.log("Nominatim reverse geocode fallback used, using GPS coordinates");
+              console.log("Nominatim reverse geocode fallback used");
             }
 
-            drawWatermark(canvas, ctx, `Lokasi: ${locationName}`, coordText, `Area: ${cityName}`);
+            drawWatermark(canvas, ctx, locationName, cityName);
             callback(canvas.toDataURL("image/jpeg", 0.9));
           },
           (err) => {
-            drawWatermark(canvas, ctx, "GPS Tidak Aktif / Ditolak", "Koordinat: --", "Periksa Izin Lokasi");
+            drawWatermark(canvas, ctx, "Pakemitan,Kecamatan Cinambo", "Kota Bandung\nJawa Barat");
             callback(canvas.toDataURL("image/jpeg", 0.9));
           },
-          { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+          { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
         );
       } else {
-        drawWatermark(canvas, ctx, "GPS Tidak Didukung", "Koordinat: --", "Browser Error");
+        drawWatermark(canvas, ctx, "Pakemitan,Kecamatan Cinambo", "Kota Bandung\nJawa Barat");
         callback(canvas.toDataURL("image/jpeg", 0.9));
       }
     };
@@ -841,7 +804,7 @@ function processImageWithGPSWatermark(file, callback){
   reader.readAsDataURL(file);
 }
 
-function drawWatermark(canvas, ctx, line2Text, line3Text, line4Text = "") {
+function drawWatermark(canvas, ctx, line2Text, line3Text) {
   const now = new Date();
   const day = String(now.getDate()).padStart(2, '0');
   const monthsShort = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agt","Sep","Okt","Nov","Des"];
@@ -856,19 +819,26 @@ function drawWatermark(canvas, ctx, line2Text, line3Text, line4Text = "") {
 
   ctx.textAlign = "right";
   const rightMargin = canvas.width - Math.max(30, canvas.width * 0.04);
-  let startY = canvas.height - Math.max(160, canvas.height * 0.19);
+  let startY = canvas.height - Math.max(140, canvas.height * 0.18);
 
   ctx.font = `bold ${fontSize}px sans-serif`;
   ctx.fillStyle = "#ffffff";
-  ctx.shadowColor = "rgba(0, 0, 0, 0.25)";
-  ctx.shadowBlur = 3;
+  ctx.shadowColor = "rgba(0, 0, 0, 0.2)";
+  ctx.shadowBlur = 2;
   ctx.lineWidth = 4;
 
-  const lines = [timeStr, line2Text, line3Text, line4Text].filter(Boolean);
-  lines.forEach((line) => {
-    ctx.strokeText(line, rightMargin, startY);
-    ctx.fillText(line, rightMargin, startY);
-    startY += fontSize * 1.22;
+  ctx.strokeText(timeStr, rightMargin, startY);
+  ctx.fillText(timeStr, rightMargin, startY);
+
+  startY += fontSize * 1.25;
+  ctx.strokeText(line2Text, rightMargin, startY);
+  ctx.fillText(line2Text, rightMargin, startY);
+
+  const lines = line3Text.split("\n");
+  lines.forEach(l => {
+    startY += fontSize * 1.25;
+    ctx.strokeText(l, rightMargin, startY);
+    ctx.fillText(l, rightMargin, startY);
   });
 }
 
@@ -917,6 +887,7 @@ async function downloadAllPhotosAsZip() {
 renderDynamicInputs();
 restoreState();
 
+// Fix: Memanggil fungsi updateClock secara instan saat inisialisasi
 updateClock();
 setInterval(updateClock, 1000);
 
@@ -924,7 +895,7 @@ updateSummary();
 
 document.querySelectorAll(".nav-btn").forEach(btn=>btn.addEventListener("click",()=>switchTab(btn.dataset.tab)));
 document.addEventListener("input",e=>{
-  if(e.target.matches("input[id],textarea[id],select[id]")&&!['search-stok','search-pasar'].includes(e.target.id)){
+  if(e.target.matches("input[id],textarea[id],select[id]")&&!["search-stok","search-pasar"].includes(e.target.id)){
     saveState();
   }
 });
