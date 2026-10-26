@@ -141,29 +141,31 @@
     right: 0;
     background: var(--paper);
     border-top: var(--border);
-    padding: 10px 8px calc(10px + env(safe-area-inset-bottom));
+    padding: 10px 4px calc(10px + env(safe-area-inset-bottom));
     display: flex;
     justify-content: space-around;
     align-items: center;
     box-shadow: 0 -4px 0px #172923;
+    overflow-x: auto;
   }
   .nav-btn {
     border: 2px solid transparent;
     background: transparent;
     color: var(--muted);
-    border-radius: 14px;
+    border-radius: 12px;
     flex: 1;
-    max-width: 75px;
-    padding: 8px 4px;
-    font-size: 10px;
+    min-width: 52px;
+    max-width: 70px;
+    padding: 6px 2px;
+    font-size: 9px;
     font-weight: 800;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 3px;
+    gap: 2px;
     transition: all 0.1s ease;
   }
-  .nav-icon { font-size: 20px; line-height: 1; }
+  .nav-icon { font-size: 18px; line-height: 1; }
   .nav-btn.active {
     background: var(--yellow);
     color: var(--ink);
@@ -233,7 +235,7 @@
 </head>
 <body>
 
-<!-- BANNER ERROR (muncul otomatis kalau ada error, supaya tidak "diam saja") -->
+<!-- BANNER ERROR -->
 <div id="err-banner" class="hidden" style="position:fixed;left:8px;right:8px;top:8px;z-index:70;background:#ff8787;border:2.5px solid #172923;border-radius:14px;padding:10px 12px;font-weight:800;font-size:12px;box-shadow:3px 3px 0 #172923;">
   <div id="err-text" style="overflow-wrap:anywhere;"></div>
   <button type="button" id="err-close" class="neo-btn bg-white px-3 py-1 text-[11px] font-black" style="margin-top:8px;">Tutup</button>
@@ -244,10 +246,10 @@
   <div class="max-w-2xl mx-auto flex justify-between items-center relative z-10">
     <div>
       <div class="flex items-center gap-2 mb-1">
-        <span class="bg-black text-yellow-300 text-[10px] uppercase font-black px-2 py-0.5 rounded-full border border-black">🍳 V1.5 Alpha(Budug)</span>
-        <span class="text-xs font-extrabold text-[#2a4439]">Pencatatan Operasional</span>
+        <span class="bg-black text-yellow-300 text-[10px] uppercase font-black px-2 py-0.5 rounded-full border border-black">🍳 V1.7.2 Pro (Aldi Edition)</span>
+        <span class="text-xs font-extrabold text-[#2a4439]">Pencatatan Operasional Dapur</span>
       </div>
-      <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-[#172923]">Gudang Harian DADAR ANYING</h1>
+      <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-[#172923]">Gudang Harian DADAR BEREDAR</h1>
       <div class="text-xs font-bold text-[#355246] mt-2 flex items-center gap-1.5 flex-wrap">
         <span>📅</span>
         <input type="date" id="global-date" aria-label="Pilih tanggal laporan">
@@ -295,14 +297,14 @@
       <div class="text-[10px] font-bold text-[#0b7285] mt-0.5">Bahan pasar</div>
     </div>
     <div class="neo-card p-3.5 bg-[#fff3bf]">
-      <div class="text-[10px] font-black uppercase tracking-wider text-[#e67700]">Foto</div>
-      <div class="text-2xl font-black text-[#172923] mt-1" id="sum-foto">0</div>
-      <div class="text-[10px] font-bold text-[#e67700] mt-0.5"></div>
+      <div class="text-[10px] font-black uppercase tracking-wider text-[#e67700]">Datang Pasar</div>
+      <div class="text-2xl font-black text-[#172923] mt-1" id="sum-datang">0/24</div>
+      <div class="text-[10px] font-bold text-[#e67700] mt-0.5">Barang datang</div>
     </div>
     <div class="neo-card p-3.5 bg-[#ffdeeb]">
-      <div class="text-[10px] font-black uppercase tracking-wider text-[#c2255c]">Penyimpanan</div>
-      <div class="text-xl font-black text-[#172923] mt-1">Pake bismillah </div>
-      <div class="text-[10px] font-bold text-[#c2255c] mt-0.5">Moga ga kereset</div>
+      <div class="text-[10px] font-black uppercase tracking-wider text-[#c2255c]">Foto</div>
+      <div class="text-2xl font-black text-[#172923] mt-1" id="sum-foto">0</div>
+      <div class="text-[10px] font-bold text-[#c2255c] mt-0.5">Tersimpan</div>
     </div>
   </section>
 
@@ -359,7 +361,6 @@
       </div>
       <div class="relative mb-4">
         <input id="search-stok" class="w-full pl-10 pr-4 py-3" type="text" placeholder="🔎 Cari barang atau bumbu..." autocomplete="off">
-        <span class="absolute left-3.5 top-3.5 text-base"></span>
       </div>
       <div id="stok-groups-container" class="space-y-4"></div>
     </div>
@@ -377,9 +378,25 @@
       </div>
       <div class="relative mb-4">
         <input id="search-pasar" class="w-full pl-10 pr-4 py-3" type="text" placeholder="🔎 Cari bahan pasar..." autocomplete="off">
-        <span class="absolute left-3.5 top-3.5 text-base"></span>
       </div>
       <div id="pasar-inputs" class="space-y-3"></div>
+    </div>
+  </section>
+
+  <!-- TAB 4.5: DATANG PASAR -->
+  <section id="tab-datang" class="tab">
+    <div class="neo-card p-4 sm:p-6 mb-5">
+      <div class="flex items-start justify-between gap-3 mb-4 pb-3 border-b-2 border-[#172923]">
+        <div>
+          <h2 class="text-lg sm:text-xl font-black text-[#172923] flex items-center gap-2">🚚 Datang Pasar</h2>
+          <p class="text-xs font-bold text-[#5e6d67] mt-1">Input jumlah bahan pasar yang datang (kosongkan jika tidak ada)</p>
+        </div>
+        <span class="badge-tag bg-[#ffd43b]">DATANG</span>
+      </div>
+      <div class="relative mb-4">
+        <input id="search-datang" class="w-full pl-10 pr-4 py-3" type="text" placeholder="🔎 Cari bahan datang..." autocomplete="off">
+      </div>
+      <div id="datang-inputs" class="space-y-3"></div>
     </div>
   </section>
 
@@ -472,7 +489,15 @@
         </div>
 
         <div>
-          <div class="text-xs font-black uppercase mb-1.5 text-[#172923] flex items-center gap-1.5">⚙️ 3. Laporan Pemakaian & Telur</div>
+          <div class="text-xs font-black uppercase mb-1.5 text-[#172923] flex items-center gap-1.5">🚚 3. Laporan Datang Pasar</div>
+          <textarea id="output-datang" class="report-box w-full" readonly placeholder="Laporan datang pasar akan muncul di sini..."></textarea>
+          <div class="mt-2 flex justify-end">
+            <button class="neo-btn neo-btn-yellow px-4 py-2 text-xs font-black" data-copy="output-datang">📋 Salin Laporan Datang</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="text-xs font-black uppercase mb-1.5 text-[#172923] flex items-center gap-1.5">⚙️ 4. Laporan Pemakaian & Telur</div>
           <textarea id="output-pemakaian" class="report-box w-full" readonly placeholder="Laporan pemakaian akan muncul di sini..."></textarea>
           <div class="mt-2 flex justify-end">
             <button class="neo-btn neo-btn-pink px-4 py-2 text-xs font-black" data-copy="output-pemakaian">📋 Salin Laporan Pemakaian</button>
@@ -502,6 +527,7 @@
   <button class="nav-btn" data-tab="telur"><span class="nav-icon">🥚</span>Telur</button>
   <button class="nav-btn" data-tab="stok"><span class="nav-icon">📋</span>Stok</button>
   <button class="nav-btn" data-tab="pasar"><span class="nav-icon">🥬</span>Pasar</button>
+  <button class="nav-btn" data-tab="datang"><span class="nav-icon">🚚</span>Datang</button>
   <button class="nav-btn" data-tab="pemakaian"><span class="nav-icon">⚙️</span>Ops</button>
   <button class="nav-btn" data-tab="laporan"><span class="nav-icon">📝</span>Laporan</button>
 </nav>
@@ -541,7 +567,6 @@
 <script>
 const $=id=>document.getElementById(id);
 
-/* ---------- PENANGKAP ERROR: tampil di layar supaya tidak "diam saja" ---------- */
 function showErr(msg){
   try{
     $("err-text").textContent = "⚠️ Ada error: " + msg;
@@ -567,7 +592,7 @@ const stokGroups = [
 ];
 const flatStokList = ["BUMBU AIR","BUMBU GOANG","BUMBU MASTER","CUP 14 POLOS","KERTAS PANJANG","KOTAK KARDUS DADAR BEREDAR","KRESEK BESAR PUTIH","LE MINERALE","MAGIC LEZAT 1KG","MINYAK SOVIA","PLASTIK SAMBEL","PLASTIK SEALER","SEDOTAN RUNCING PREMIUM","TEH PUCUK HARUM","TEPUNG BERAS","TEPUNG SYAZA","TEPUNG CAKRA","THERMAL 58X40","THERMAL 80X80","TISSUE BESAR LIVI","CUP OVAL 16","SEDOTAN BESAR BOBA","TEH CELUP SOSRO","NESTLE MILO 45 GR","SIRUP ABC COCOPANDAN 460ML","KECAP BANGO 1,5 L","GULA CAIR BTL","SUSU CARNATION 365","KRESEK KECIL UK 15","KRESEK 24","TELUR PER IKAT 15 KG","KOEPOE PASTA 60 ML","TEPUNG BERAS SANIA","GULA AREN","DELMONTE EXTRAHOT","BUMBU NASI JERUK","PAPER BAG POLOS","BERAS SEDAP WANGI 25KG","NESTLE CREAMER","NESTEA GREEN TEA","BUMBU DADAR JAGUNG","SIRUP DELIFRU PANDAN","POLYBAG 120 X 180","KNORR LIME","SAOS TERIYAKI","SOLASI 12 MM","TEH 25 GRAM DSM","GARAM EKSPEDISI","CUP OVAL 18 DDR","KERUPUK PULI BERAS","KERUPUK PULI TEPUNG","KERUPUK KEDELAI","KERUPUK UYEL MAWAR","KERUPUK UDANG","KERUPUK RAMBAK","KERUPUK PASIR","KULIT KRISPI","USUS KRISPI","PEYEK KACANG","PEYEK UDANG REBON","SAUS BARBEQUE","NASI MAGIC COM","SAMBAL GP","SAMBAL MASTER"];
 const pasarItems = [
-  ["CABE IJO LALAP","g"],["CABAI MERAH BESAR","g"],["BAWANG PUTIH KUPAS","g"],["BAWANG MERAH KUPAS","g"],["TOMAT MERAH","g"],["JAGUNG MANIS","g"],["DAUN BAWANG","g"],["SELADA AIR","g"],["BAWANG BOMBAY","g"],["DAUN SEREH","g"],["DAUN SALAM","g"],["CENDOL","g"],["JERUK NIPIS","g"],["LAOS MERAH","g"],["DAUN PISANG","g"],["CABE MERAH KECIL","g"],["DAUN JERUK","g"],["SELEDRI","g"],["SEMANGKA","kg"],["CINCAU","g"],["MELON","kg"],["DAUN PANDAN","g"],["KENCUR","g"],["NANGKA","g"]
+  ["CABE IJO LALAP","g"],["CABAI MERAH BESAR","g"],["BAWANG PUTIH KUPAS","g"],["BAWANG MERAH KUPAS","g"],["TOMAT MERAH","g"],["JAGUNG MANIS","g"],["DAUN BAWANG","g"],["SELADA AIR","g"],["BAWANG BOMBAY","g"],["DAUN SEREH","g"],["DAUN SALAM","g"],["CENDOL","g"],["JERUK NIPIS","g"],["LAOS MERAH","g"],["DAUN PISANG","g"],["CABE MERAH KECIL","g"],["DAUN JERUK","g"],["SELEDRI","g"],["SEMANGKA","g"],["CINCAU","g"],["MELON","g"],["DAUN PANDAN","g"],["KENCUR","g"],["NANGKA","g"]
 ];
 const dpItems = ["Cumi","Ceker","Kulit","A.suwir","Paru"];
 const itemUnit={}; stokGroups.forEach(g=>g.items.forEach(([n,u])=>itemUnit[n]=u));
@@ -576,15 +601,14 @@ const missing=flatStokList.filter(n=>!groupedNames.has(n));
 if(missing.length) stokGroups.push({title:"Item tambahan dari format laporan",items:missing.map(n=>[n,"pcs"])});
 
 /* ---------- STATE & PENYIMPANAN ---------- */
-const storageKey="gudang-harian-neo-v6";          // teks/angka (kecil) -> localStorage
-const legacyKey="gudang-harian-neo-v5-gps";       // versi lama, dimigrasi otomatis
-let photosState={};                               // foto -> IndexedDB (tidak kena batas ~5MB)
+const storageKey="gudang-harian-neo-v7";
+const legacyKey="gudang-harian-neo-v6";
+let photosState={};
 let activePhotoKey=null;
-let photoStoreOK=false;                           // IndexedDB berhasil dibuka?
-let photoPersistOK=true;                          // simpan foto terakhir berhasil?
-let lastSaveOK=true;                              // simpan teks terakhir berhasil?
+let photoStoreOK=false;
+let photoPersistOK=true;
+let lastSaveOK=true;
 
-// localStorage yang aman: kalau diblokir browser/preview, jatuh ke memori (tidak error)
 const Store=(()=>{
   let ls=null;
   try{ ls=window.localStorage; const k="__gh_test__"; ls.setItem(k,"1"); ls.removeItem(k); }catch(e){ ls=null; }
@@ -603,7 +627,6 @@ const Store=(()=>{
   };
 })();
 
-// IndexedDB untuk foto (semua pemanggilan dibungkus, gagal = jatuh ke memori)
 const PhotoDB=(()=>{
   let db=null;
   function open(){
@@ -656,19 +679,17 @@ const PhotoDB=(()=>{
   };
 })();
 
-// Elemen yang boleh disimpan/dipulihkan. INPUT FILE SENGAJA DIKECUALIKAN:
-// browser melarang mengisi value input file (error) -> inilah penyebab halaman "macet".
 function isSavable(el){
-  return !!el && !el.readOnly && el.type!=="file" && !["search-stok","search-pasar"].includes(el.id);
+  return !!el && !el.readOnly && el.type!=="file" && !["search-stok","search-pasar","search-datang"].includes(el.id);
 }
 
 function setStatus(){
   const el=$("save-status");
   if(!el) return;
   const hasPhotos=Object.keys(photosState).length>0;
-  if(!Store.persistent) el.textContent="⚠️ Browser memblokir penyimpanan — data hanya di memori, jangan tutup halaman";
+  if(!Store.persistent) el.textContent="⚠️ Browser memblokir penyimpanan — data hanya di memori";
   else if(!lastSaveOK) el.textContent="⚠️ Penyimpanan browser penuh";
-  else if(hasPhotos && !(photoStoreOK && photoPersistOK)) el.textContent="⚠️ Foto belum bisa disimpan permanen (hanya di memori)";
+  else if(hasPhotos && !(photoStoreOK && photoPersistOK)) el.textContent="⚠️ Foto belum bisa disimpan permanen";
   else el.textContent="💾 Tersimpan otomatis";
 }
 
@@ -684,7 +705,6 @@ function saveState(){
   updateSummary();
 }
 
-// Kembalikan foto lama (kalau ada) dari versi sebelumnya supaya bisa dimigrasi
 function restoreState(){
   let raw=Store.get(storageKey), legacy=false;
   if(!raw){ raw=Store.get(legacyKey); legacy=!!raw; }
@@ -701,13 +721,11 @@ function restoreState(){
   if(data._pos) setVal("global-pos",data._pos);
   Object.keys(data).forEach(id=>{ if(id.charAt(0)!=="_") setVal(id,data[id]); });
 
-  // Kalau tanggal belum ada, isi hari ini (tetap bisa diubah manual)
   if(!$("global-date").value) $("global-date").value=todayISO();
 
   return (legacy && data._photos && typeof data._photos==="object") ? data._photos : null;
 }
 
-/* ---------- UI HELPERS ---------- */
 let confirmCb=null;
 function closeModal(){
   $("custom-modal").classList.add("hidden");
@@ -721,7 +739,6 @@ function showModal(title,msg,icon="🔥"){
   $("modal-close").textContent="OK, Mengerti";
   $("custom-modal").classList.remove("hidden");
 }
-// Konfirmasi buatan sendiri (confirm() bawaan sering diblokir di preview/WebView)
 function askConfirm(title,msg,icon,onYes){
   showModal(title,msg,icon);
   confirmCb=onYes;
@@ -729,13 +746,10 @@ function askConfirm(title,msg,icon,onYes){
   $("modal-close").textContent="Ya, lanjut";
 }
 
-/* ---------- TANGGAL MANUAL ---------- */
-// Format YYYY-MM-DD dari tanggal lokal perangkat (bukan UTC)
 function todayISO(){
   const d=new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
 }
-// Ambil tanggal yang dipilih user sebagai objek Date lokal; fallback ke hari ini
 function getSelectedDate(){
   const v=$("global-date")?$("global-date").value:"";
   const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(v);
@@ -784,12 +798,24 @@ function renderDynamicInputs(){
       </div>
     </div>
   `).join("");
+
+  $("datang-inputs").innerHTML=pasarItems.map(([name,unit])=>`
+    <div class="flex items-center justify-between gap-3 bg-[#fcf8f2] p-3 rounded-xl border-2 border-[#172923] shadow-[2px_2px_0px_#172923] datang-row" data-name="${name.toLowerCase()}">
+      <label for="datang-${slug(name)}" class="text-xs font-extrabold text-[#172923] flex-1">${name} <span class="text-[10px] font-bold text-[#5e6d67]">(${unit})</span></label>
+      <div class="flex items-center gap-2">
+        <input id="datang-${slug(name)}" type="number" min="0" step="any" placeholder="—" inputmode="decimal" class="w-24 text-center">
+        <button type="button" class="neo-btn bg-white px-2.5 py-2 text-xs font-black camera-btn" data-key="datang_${name}" title="Ambil Foto Watermark GPS">
+          📷 <span id="badge-datang_${name}" class="hidden bg-red-500 text-white rounded-full px-1.5 text-[9px]">✓</span>
+        </button>
+        <input type="file" accept="image/*" capture="environment" class="hidden file-input" id="file-datang_${name}" data-key="datang_${name}">
+      </div>
+    </div>
+  `).join("");
 }
 
 function slug(s){return s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}
 function val(id){const el=$(id);return el && el.value.trim()!==""?el.value.trim():""}
 
-// Exact decimal conversion for grams to kg without rounding off
 function reportVal(id,unit=""){
   const v=val(id);
   if(v==="")return "-";
@@ -813,6 +839,8 @@ function updateSummary(){
   $("sum-stok").textContent=count;
   const pcount=pasarItems.filter(([n])=>val(`pasar-${slug(n)}`)!=="").length;
   $("sum-pasar").textContent=`${pcount}/${pasarItems.length}`;
+  const dcount=pasarItems.filter(([n])=>val(`datang-${slug(n)}`)!=="").length;
+  $("sum-datang").textContent=`${dcount}/${pasarItems.length}`;
   $("sum-foto").textContent=Object.keys(photosState).length;
 }
 
@@ -840,10 +868,9 @@ function switchTab(id){
 }
 
 function generateReports(){
-  // Pakai tanggal yang dipilih manual di header
   const sel=getSelectedDate(),months=["JANUARI","FEBRUARI","MARET","APRIL","MEI","JUNI","JULI","AGUSTUS","SEPTEMBER","OKTOBER","NOVEMBER","DESEMBER"],tgl=`${sel.getDate()}-${sel.getMonth()+1}-${sel.getFullYear()}`,shift=$("global-shift").value,pos=$("global-pos").value;
 
-  let stok=`SISA STOCK CLOSING SETIAP SHIFT ${months[sel.getMonth()]} ${tgl} SHIFT ${shift} (POS: ${pos})*\n`;
+  let stok=`SISA STOCK CLOSING SETIAP SHIFT ${months[sel.getMonth()]} ${tgl} SHIFT ${shift}*\n`;
   flatStokList.forEach(name=>{
     const unit=itemUnit[name]||"pcs";
     stok+=`${name} : ${reportVal(`input-stok-${name}`,unit==="gr"?"gr":unit)}\n`;
@@ -856,9 +883,23 @@ function generateReports(){
   });
   $("output-pasar").value=pasar.trim();
 
-  let pakai=`*PEMAKAIAN DP, TELUR DAN GUDANG SHIFT ${shift} (${pos}) TGL ${tgl}*\n\n*PEMAKAIAN DP*\n`;
+  let datang=` ${pos}\n`;
+  let hasDatang = false;
+  pasarItems.forEach(([name,unit])=>{
+    const v = val(`datang-${slug(name)}`);
+    if(v !== "") {
+      hasDatang = true;
+      datang+=`${name} : ${reportVal(`datang-${slug(name)}`,unit)}\n`;
+    }
+  });
+  if(!hasDatang) {
+    datang+=`- Tidak ada bahan datang -\n`;
+  }
+  $("output-datang").value=datang.trim();
+
+  let pakai=`*PEMAKAIAN DP, TELUR DAN GUDANG SHIFT ${shift} TGL ${tgl}*\n\n*PEMAKAIAN DP*\n`;
   dpItems.forEach(item=>pakai+=`${item} : ${val(`dp-${item}`)||"-"}\n`);
-  pakai+=`\n*PENGAMBILAN TELUR*\n${val("val-pengambilan-telur")||"-"} butir\n\n*PEMAKAIAN TELUR DADAR*\n${val("val-pemakaian-telur-dadar")||"-"} batch\n\n*SISA TELUR*\n${val("val-sisa-telur")||"-"} butir\n\n*PEMAKAIAN DAPUR BELAKANG*\nShift : ${shift.toLowerCase()} (${pos})\nTgl : ${tgl}\n\n*CEKER CRISPY*\nPemakaian : ${val("cc-pakai")||"-"} porsi\nProses : ${val("cc-proses")||"-"}\nSisa : ${val("cc-sisa")||"-"}\n\n*DAPUR DEPAN*\n\n*DADAR JAGUNG*\n${val("dd-batch")||"-"} batch\n\n*CEPLOK*\n${val("ceplok-val")||"-"}\n\n*GUDANG*\n${val("gudang-pemakaian-lain")||"-"}`;
+  pakai+=`\n*PENGAMBILAN TELUR*\n${val("val-pengambilan-telur")||"-"} butir\n\n*PEMAKAIAN TELUR DADAR*\n${val("val-pemakaian-telur-dadar")||"-"} batch\n\n*SISA TELUR*\n${val("val-sisa-telur")||"-"} butir\n\n*PEMAKAIAN DAPUR BELAKANG*\nShift : ${shift.toLowerCase()} \nTgl : ${tgl}\n\n*CEKER CRISPY*\nPemakaian : ${val("cc-pakai")||"-"} porsi\nProses : ${val("cc-proses")||"-"}\nSisa : ${val("cc-sisa")||"-"}\n\n*DAPUR DEPAN*\n\n*DADAR JAGUNG*\n${val("dd-batch")||"-"} batch\n\n*CEPLOK*\n${val("ceplok-val")||"-"}\n\n*GUDANG*\n${val("gudang-pemakaian-lain")||"-"}`;
 
   $("output-pemakaian").value=pakai;
   saveState();
@@ -899,6 +940,7 @@ async function doReset(){
   if(photoStoreOK) await PhotoDB.clear();
   $("output-stok").value="";
   $("output-pasar").value="";
+  $("output-datang").value="";
   $("output-pemakaian").value="";
   saveState();
   updatePhotoIndicators();
@@ -919,10 +961,8 @@ function filterRows(inputId,rowSelector){
 }
 
 /* ---------- FOTO + WATERMARK GPS ---------- */
-// Foto diperkecil (sisi terpanjang maks 1600px) supaya ringan disimpan & di-ZIP.
-// Watermark memakai waktu asli perangkat (bukti), tidak mengikuti tanggal manual di header.
 const MAX_SIDE=1600, JPEG_Q=0.82;
-const DEFAULT_L2="Pakemitan,Kecamatan Cinambo";
+const DEFAULT_L2="Arcamanik,Kecamatan Arcamanik";
 const DEFAULT_L3="Kota Bandung\nJawa Barat";
 
 function processImageWithGPSWatermark(file, callback){
@@ -946,7 +986,6 @@ function processImageWithGPSWatermark(file, callback){
       drawWatermark(canvas,ctx,l2,l3);
       callback(canvas.toDataURL("image/jpeg",JPEG_Q));
     };
-    // Pengaman: kalau GPS/geocode macet, tetap lanjut pakai lokasi default
     const hardTimer=setTimeout(()=>finish(DEFAULT_L2,DEFAULT_L3),18000);
 
     if(navigator.geolocation){
@@ -960,8 +999,8 @@ function processImageWithGPSWatermark(file, callback){
             clearTimeout(t);
             const data=await res.json();
             if(data && data.address){
-              const sub = data.address.village || data.address.suburb || data.address.neighbourhood || "Pakemitan";
-              const dist = data.address.city_district || data.address.town || data.address.county || "Kecamatan Cinambo";
+              const sub = data.address.village || data.address.suburb || data.address.neighbourhood || "Arcamanik";
+              const dist = data.address.city_district || data.address.town || data.address.county || "Kecamatan Arcamanik";
               const city = data.address.city || data.address.state || "Kota Bandung";
               const state = data.address.state || "Jawa Barat";
               l2 = `${sub}, ${dist}`;
@@ -1026,7 +1065,6 @@ function drawWatermark(canvas, ctx, line2Text, line3Text) {
   });
 }
 
-// Bulk download all captured photos as ZIP
 async function downloadAllPhotosAsZip() {
   const keys = Object.keys(photosState);
   if(keys.length === 0) {
@@ -1067,7 +1105,7 @@ async function downloadAllPhotosAsZip() {
   }
 }
 
-/* ---------- EVENT LISTENERS (dipasang DULU, sebelum memuat data) ---------- */
+/* ---------- EVENT LISTENERS ---------- */
 document.querySelectorAll(".nav-btn").forEach(btn=>btn.addEventListener("click",()=>switchTab(btn.dataset.tab)));
 
 document.addEventListener("input",e=>{
@@ -1082,7 +1120,7 @@ document.addEventListener("click", e => {
     const key = btn.dataset.key;
     if(photosState[key]){
       activePhotoKey = key;
-      $("photo-modal-title").textContent = `Foto GPS: ${key.replace(/^(stok_|pasar_)/, '')}`;
+      $("photo-modal-title").textContent = `Foto GPS: ${key.replace(/^(stok_|pasar_|datang_)/, '')}`;
       $("photo-modal-img").src = photosState[key];
       $("photo-modal").classList.remove("hidden");
     } else {
@@ -1100,7 +1138,7 @@ document.addEventListener("change", e => {
     if(file){
       showModal("Memproses GPS...", "Mengambil koordinat lokasi akurat & menambahkan cap waktu pada foto...", "⏳");
       processImageWithGPSWatermark(file, async (watermarkedDataUrl) => {
-        try{ fileInput.value=""; }catch(err){}   // boleh dikosongkan; supaya bisa foto ulang
+        try{ fileInput.value=""; }catch(err){}
         if(!watermarkedDataUrl){
           showModal("Gagal", "Foto tidak bisa dibaca. Coba ambil ulang.", "❌");
           return;
@@ -1156,18 +1194,18 @@ $("reset-btn").addEventListener("click", resetShift);
 document.querySelectorAll("[data-copy]").forEach(btn=>btn.addEventListener("click",()=>copyText(btn.dataset.copy)));
 $("search-stok").addEventListener("input",()=>filterRows("search-stok",".stock-row"));
 $("search-pasar").addEventListener("input",()=>filterRows("search-pasar",".pasar-row"));
+$("search-datang").addEventListener("input",()=>filterRows("search-datang",".datang-row"));
 
 /* ---------- INIT ---------- */
 async function init(){
   renderDynamicInputs();
-  const legacyPhotos=restoreState();      // teks/angka langsung kembali, UI sudah bisa dipakai
+  const legacyPhotos=restoreState();
   updateSummary();
   setStatus();
 
   photoStoreOK=await PhotoDB.open();
   if(photoStoreOK) photosState=await PhotoDB.getAll();
 
-  // Migrasi foto dari versi lama (yang dulu disimpan di localStorage)
   if(legacyPhotos){
     for(const k of Object.keys(legacyPhotos)){
       if(!photosState[k] && typeof legacyPhotos[k]==="string"){
