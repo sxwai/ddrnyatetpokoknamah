@@ -103,6 +103,21 @@
     box-shadow: 3px 3px 0px #172923;
   }
 
+  /* Date input di header */
+  #global-date {
+    border: 2px solid #172923;
+    background: #fff;
+    border-radius: 10px;
+    padding: 4px 8px;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--ink);
+    box-shadow: 2px 2px 0px #172923;
+    outline: none;
+    width: auto;
+    min-height: 32px;
+  }
+
   /* App Header */
   .app-header {
     background: var(--yellow);
@@ -224,8 +239,10 @@
         <span class="text-xs font-extrabold text-[#2a4439]">Pencatatan Operasional</span>
       </div>
       <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-[#172923]">Gudang Harian DADAR ANYING</h1>
-      <div id="live-clock" class="text-xs font-bold text-[#355246] mt-1 flex items-center gap-1.5">
-        <span>📅</span> <span id="clock-text">Memuat tanggal…</span>
+      <div class="text-xs font-bold text-[#355246] mt-2 flex items-center gap-1.5 flex-wrap">
+        <span>📅</span>
+        <input type="date" id="global-date" aria-label="Pilih tanggal laporan">
+        <button type="button" id="date-today-btn" class="neo-btn bg-white px-2 py-1 text-[10px] font-black" title="Set ke tanggal hari ini">Hari ini</button>
       </div>
     </div>
     
@@ -512,8 +529,8 @@
 <script>
 const stokGroups = [
   {title:"Bumbu & stok dapur belakang",items:[["BUMBU AIR","pcs"],["BUMBU GOANG","pcs"],["BUMBU MASTER","pcs"],["BUMBU NASI JERUK","pcs"],["BUMBU DADAR JAGUNG","pcs"],["TEPUNG BERAS","gr"],["TEPUNG CAKRA","gr"],["BERAS SEDAP WANGI 25KG","gr"]]},
-  {title:"Bagian minuman",items:[["CUP 14 POLOS","pcs"],["CUP OVAL 16","pcs"],["CUP OVAL 18 DDR","pcs"],["KNORR LIME","gr"],["SIRUP DELIFRU PANDAN","gr"],["NESTLE CREAMER","gr"],["KOEPOE PASTA 60 ML","gr"],["GULA CAIR BTL","gr"],["SUSU CARNATION 365","gr"],["GARAM EKSPEDISI","gr"]]},
-  {title:"Bagian minuman (2)",items:[["TEH CELUP SOSRO","pcs"],["NESTLE MILO 45 GR","pcs"],["NESTEA GREEN TEA","pcs"],["TEH 25 GRAM DSM","pcs"]]},
+  {title:"Bagian minuman",items:[["CUP 14 POLOS","pcs"],["CUP OVAL 16","pcs"],["CUP OVAL 18 DDR","pcs"],["KNORR LIME","gr"],["SIRUP DELIFRU PANDAN","gr"],["NESTLE CREAMER","gr"],["KOEPOE PASTA 60 ML","gr"],["GULA CAIR BTL","gr"],["SUSU CARNATION 365","gr"],["GARAM EKSPEDISI","gr"],["TEH CELUP SOSRO","pcs"]]},
+  {title:"Bagian minuman (2)",items:[["NESTLE MILO 45 GR","pcs"],["NESTEA GREEN TEA","pcs"],["TEH 25 GRAM DSM","pcs"]]},
   {title:"Penyajian",items:[["DELMONTE EXTRAHOT","pcs"],["KERTAS PANJANG","pcs"],["KOTAK KARDUS DADAR BEREDAR","pcs"],["KRESEK BESAR PUTIH","pcs"],["POLYBAG 120 X 180","pcs"],["KRESEK KECIL UK 15","pcs"],["KRESEK 24","gr"]]},
   {title:"Depan",items:[["KECAP BANGO 1,5 L","gr"],["MAGIC LEZAT 1KG","gr"],["MINYAK SOVIA","gr"],["TELUR PER IKAT 15 KG",""],["SAOS TERIYAKI","gr"],["TEPUNG SYAZA","gr"],["SAUS BARBEQUE","gr"],["NASI MAGIC COM","gr"],["SAMBAL GP","gr"],["SAMBAL MASTER","gr"]]},
   {title:"Kasir",items:[["TEH PUCUK HARUM","pcs"],["LE MINERALE","pcs"],["KERUPUK PULI BERAS","pcs"],["KERUPUK PULI TEPUNG","pcs"],["KERUPUK KEDELAI","pcs"],["KERUPUK UYEL MAWAR","pcs"],["KERUPUK UDANG","pcs"],["KERUPUK RAMBAK","pcs"],["KERUPUK PASIR","pcs"],["KULIT KRISPI","pcs"],["USUS KRISPI","pcs"],["PEYEK KACANG","pcs"],["PEYEK UDANG REBON","pcs"]]}
@@ -541,6 +558,20 @@ function showModal(title, msg, icon="🔥") {
   $("custom-modal").classList.remove("hidden");
 }
 $("modal-close").addEventListener("click", () => $("custom-modal").classList.add("hidden"));
+
+/* ---------- TANGGAL MANUAL ---------- */
+// Format YYYY-MM-DD dari tanggal lokal perangkat (bukan UTC)
+function todayISO(){
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+// Ambil tanggal yang dipilih user sebagai objek Date lokal; fallback ke hari ini
+function getSelectedDate(){
+  const v = $("global-date") ? $("global-date").value : "";
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v);
+  if(!m) return new Date();
+  return new Date(Number(m[1]), Number(m[2])-1, Number(m[3]));
+}
 
 function readState(){
   try{return JSON.parse(localStorage.getItem(storageKey)||"{}")}catch(e){return {}}
@@ -574,6 +605,8 @@ function restoreState(){
     const el=$(id);
     if(el && !el.readOnly) el.value=val;
   });
+  // Kalau belum ada tanggal tersimpan, isi default hari ini (masih bisa diubah manual)
+  if(!$("global-date").value) $("global-date").value = todayISO();
   updatePhotoIndicators();
 }
 
@@ -641,15 +674,6 @@ function reportVal(id,unit=""){
   return `${n.toString().replace('.', ',')}`;
 }
 
-function updateClock(){
-  const clockEl = $("clock-text");
-  if(!clockEl) return;
-  const now=new Date();
-  const days=["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
-  const months=["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agt","Sep","Okt","Nov","Des"];
-  clockEl.textContent = `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()} • ${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}`;
-}
-
 function updateSummary(){
   const count=flatStokList.filter(n=>val(`input-stok-${n}`)!=="").length;
   $("sum-stok").textContent=count;
@@ -682,9 +706,10 @@ function switchTab(id){
 }
 
 function generateReports(){
-  const now=new Date(),months=["JANUARI","FEBRUARI","MARET","APRIL","MEI","JUNI","JULI","AGUSTUS","SEPTEMBER","OKTOBER","NOVEMBER","DESEMBER"],tgl=`${now.getDate()}-${now.getMonth()+1}-${now.getFullYear()}`,shift=$("global-shift").value,pos=$("global-pos").value;
+  // Pakai tanggal yang dipilih manual di header
+  const sel=getSelectedDate(),months=["JANUARI","FEBRUARI","MARET","APRIL","MEI","JUNI","JULI","AGUSTUS","SEPTEMBER","OKTOBER","NOVEMBER","DESEMBER"],tgl=`${sel.getDate()}-${sel.getMonth()+1}-${sel.getFullYear()}`,shift=$("global-shift").value,pos=$("global-pos").value;
   
-  let stok=`SISA STOCK CLOSING SETIAP SHIFT ${months[now.getMonth()]} ${tgl} SHIFT ${shift} (POS: ${pos})*\n`;
+  let stok=`SISA STOCK CLOSING SETIAP SHIFT ${months[sel.getMonth()]} ${tgl} SHIFT ${shift}*\n`;
   flatStokList.forEach(name=>{
     const unit=itemUnit[name]||"pcs";
     stok+=`${name} : ${reportVal(`input-stok-${name}`,unit==="gr"?"gr":unit)}\n`;
@@ -697,7 +722,7 @@ function generateReports(){
   });
   $("output-pasar").value=pasar.trim();
 
-  let pakai=`*PEMAKAIAN DP, TELUR DAN GUDANG SHIFT ${shift} (${pos}) TGL ${tgl}*\n\n*PEMAKAIAN DP*\n`;
+  let pakai=`*PEMAKAIAN DP, TELUR DAN GUDANG SHIFT ${shift} TGL ${tgl}*\n\n*PEMAKAIAN DP*\n`;
   dpItems.forEach(item=>pakai+=`${item} : ${val(`dp-${item}`)||"-"}\n`);
   pakai+=`\n*PENGAMBILAN TELUR*\n${val("val-pengambilan-telur")||"-"} butir\n\n*PEMAKAIAN TELUR DADAR*\n${val("val-pemakaian-telur-dadar")||"-"} batch\n\n*SISA TELUR*\n${val("val-sisa-telur")||"-"} butir\n\n*PEMAKAIAN DAPUR BELAKANG*\nShift : ${shift.toLowerCase()} (${pos})\nTgl : ${tgl}\n\n*CEKER CRISPY*\nPemakaian : ${val("cc-pakai")||"-"} porsi\nProses : ${val("cc-proses")||"-"}\nSisa : ${val("cc-sisa")||"-"}\n\n*DAPUR DEPAN*\n\n*DADAR JAGUNG*\n${val("dd-batch")||"-"} batch\n\n*CEPLOK*\n${val("ceplok-val")||"-"}\n\n*GUDANG*\n${val("gudang-pemakaian-lain")||"-"}`;
   
@@ -725,7 +750,8 @@ async function copyText(id){
 function resetShift(){
   if(confirm("Kosongkan semua input dan foto untuk shift ini?")) {
     document.querySelectorAll("input[id],textarea[id]").forEach(el=>{
-      if(!el.readOnly && !["search-stok","search-pasar"].includes(el.id)) el.value="";
+      // Tanggal tidak ikut dikosongkan
+      if(!el.readOnly && !["search-stok","search-pasar","global-date"].includes(el.id)) el.value="";
     });
     photosState = {};
     $("output-stok").value="";
@@ -751,6 +777,8 @@ function filterRows(inputId,rowSelector){
 }
 
 // High-accuracy GPS & Timestamp Watermark Canvas Generator
+// Catatan: watermark foto sengaja tetap memakai waktu asli perangkat (sebagai bukti),
+// tidak mengikuti tanggal manual di header.
 function processImageWithGPSWatermark(file, callback){
   const reader = new FileReader();
   reader.onload = function(e){
@@ -857,8 +885,9 @@ async function downloadAllPhotosAsZip() {
 
   showModal("Menyiapkan ZIP...", "Sedang mengemas semua foto ber-watermark GPS...", "⏳");
   
+  const dateStr = $("global-date").value || todayISO();
   const zip = new JSZip();
-  const folder = zip.folder("gudang_photos_" + new Date().toISOString().slice(0,10));
+  const folder = zip.folder("gudang_photos_" + dateStr);
 
   keys.forEach(key => {
     const dataUrl = photosState[key];
@@ -871,7 +900,7 @@ async function downloadAllPhotosAsZip() {
     const url = URL.createObjectURL(content);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `Gudang_Photos_${$("global-shift").value}_${new Date().toISOString().slice(0,10)}.zip`;
+    a.download = `Gudang_Photos_${$("global-shift").value}_${dateStr}.zip`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -886,11 +915,6 @@ async function downloadAllPhotosAsZip() {
 
 renderDynamicInputs();
 restoreState();
-
-// Fix: Memanggil fungsi updateClock secara instan saat inisialisasi
-updateClock();
-setInterval(updateClock, 1000);
-
 updateSummary();
 
 document.querySelectorAll(".nav-btn").forEach(btn=>btn.addEventListener("click",()=>switchTab(btn.dataset.tab)));
@@ -946,6 +970,14 @@ $("photo-modal-del").addEventListener("click", () => {
 
 $("global-shift").addEventListener("change", saveState);
 $("global-pos").addEventListener("change", saveState);
+$("global-date").addEventListener("change", () => {
+  if(!$("global-date").value) $("global-date").value = todayISO();
+  saveState();
+});
+$("date-today-btn").addEventListener("click", () => {
+  $("global-date").value = todayISO();
+  saveState();
+});
 $("generate-btn").addEventListener("click", generateReports);
 $("fab-generate").addEventListener("click", generateReports);
 $("download-all-photos-btn").addEventListener("click", downloadAllPhotosAsZip);
