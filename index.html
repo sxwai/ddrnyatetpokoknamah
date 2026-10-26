@@ -24,7 +24,7 @@
     --pink: #ff8787;
     --orange: #ffb156;
   }
-  
+
   * { box-sizing: border-box; }
   html, body {
     margin: 0;
@@ -43,6 +43,9 @@
 
   button, input, textarea, select { font: inherit; }
   button { cursor: pointer; }
+
+  /* Pastikan modal & banner tetap tersembunyi walau CDN Tailwind gagal dimuat */
+  #photo-modal.hidden, #custom-modal.hidden, #err-banner.hidden { display: none !important; }
 
   /* Neo-brutalist Card Style */
   .neo-card {
@@ -88,7 +91,7 @@
     color: var(--ink);
     outline: none;
     font-weight: 700;
-    font-size: 16px; 
+    font-size: 16px;
     box-shadow: 2px 2px 0px #172923;
     transition: background 0.1s ease;
     width: 100%;
@@ -230,6 +233,12 @@
 </head>
 <body>
 
+<!-- BANNER ERROR (muncul otomatis kalau ada error, supaya tidak "diam saja") -->
+<div id="err-banner" class="hidden" style="position:fixed;left:8px;right:8px;top:8px;z-index:70;background:#ff8787;border:2.5px solid #172923;border-radius:14px;padding:10px 12px;font-weight:800;font-size:12px;box-shadow:3px 3px 0 #172923;">
+  <div id="err-text" style="overflow-wrap:anywhere;"></div>
+  <button type="button" id="err-close" class="neo-btn bg-white px-3 py-1 text-[11px] font-black" style="margin-top:8px;">Tutup</button>
+</div>
+
 <!-- APP HEADER -->
 <header class="app-header">
   <div class="max-w-2xl mx-auto flex justify-between items-center relative z-10">
@@ -245,7 +254,7 @@
         <button type="button" id="date-today-btn" class="neo-btn bg-white px-2 py-1 text-[10px] font-black" title="Set ke tanggal hari ini">Hari ini</button>
       </div>
     </div>
-    
+
     <!-- Shift & POS Selector Dropdowns -->
     <div class="flex items-center gap-2">
       <div class="bg-white border-2 border-[#172923] p-1.5 rounded-xl shadow-[3px_3px_0px_#172923] flex items-center gap-1.5">
@@ -384,7 +393,7 @@
         </div>
         <span class="badge-tag bg-[#ffb156]">OPS</span>
       </div>
-      
+
       <div class="space-y-4">
         <div class="bg-[#fcf8f2] border-2 border-[#172923] p-4 rounded-xl shadow-[2px_2px_0px_#172923]">
           <div class="text-xs font-black uppercase text-[#172923] bg-[#ffd43b] px-2.5 py-1 rounded-md border border-[#172923] inline-block mb-3">Ceker Crispy</div>
@@ -470,7 +479,7 @@
           </div>
         </div>
 
-        <div class="pt-4 border-t-2 border-[#172923] flex justify-between items-center">
+        <div class="pt-4 border-t-2 border-[#172923] flex justify-between items-center gap-3">
           <div class="text-xs font-bold text-[#5e6d67]" id="save-status">💾 Tersimpan otomatis</div>
           <button class="neo-btn bg-white hover:bg-red-50 text-red-600 border-2 border-red-600 px-4 py-2 text-xs font-black shadow-[2px_2px_0px_#b9473d]" id="reset-btn">
             🗑️ Kosongkan Shift
@@ -504,7 +513,7 @@
       <h3 id="photo-modal-title" class="text-base font-black text-[#172923]">Pratinjau Foto Watermark GPS</h3>
       <button id="photo-modal-close" class="neo-btn bg-white px-2.5 py-1 text-xs font-black">✕</button>
     </div>
-    
+
     <div class="relative bg-black rounded-xl overflow-hidden border-2 border-[#172923] flex items-center justify-center">
       <img id="photo-modal-img" src="" alt="Pratinjau" class="w-full max-h-[340px] object-contain">
     </div>
@@ -516,21 +525,42 @@
   </div>
 </div>
 
-<!-- CUSTOM NOTIFICATION MODAL -->
+<!-- CUSTOM NOTIFICATION / CONFIRM MODAL -->
 <div id="custom-modal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 hidden">
   <div class="neo-card bg-white p-6 max-w-sm w-full text-center space-y-4">
     <div id="modal-icon" class="text-4xl">🔥</div>
     <h3 id="modal-title" class="text-lg font-black text-[#172923]">Informasi</h3>
     <p id="modal-message" class="text-xs font-bold text-[#5e6d67] leading-relaxed"></p>
-    <button id="modal-close" class="neo-btn neo-btn-yellow w-full py-3 text-xs font-black">OK, Mengerti</button>
+    <div class="flex gap-2">
+      <button id="modal-cancel" class="neo-btn bg-white flex-1 py-3 text-xs font-black hidden">Batal</button>
+      <button id="modal-close" class="neo-btn neo-btn-yellow flex-1 py-3 text-xs font-black">OK, Mengerti</button>
+    </div>
   </div>
 </div>
 
 <script>
+const $=id=>document.getElementById(id);
+
+/* ---------- PENANGKAP ERROR: tampil di layar supaya tidak "diam saja" ---------- */
+function showErr(msg){
+  try{
+    $("err-text").textContent = "⚠️ Ada error: " + msg;
+    $("err-banner").classList.remove("hidden");
+  }catch(e){}
+}
+window.addEventListener("error", ev => {
+  if(ev && ev.message && ev.message !== "Script error.") showErr(ev.message);
+});
+window.addEventListener("unhandledrejection", ev => {
+  const r = ev && ev.reason;
+  showErr(r && r.message ? r.message : String(r));
+});
+
+/* ---------- DATA ---------- */
 const stokGroups = [
   {title:"Bumbu & stok dapur belakang",items:[["BUMBU AIR","pcs"],["BUMBU GOANG","pcs"],["BUMBU MASTER","pcs"],["BUMBU NASI JERUK","pcs"],["BUMBU DADAR JAGUNG","pcs"],["TEPUNG BERAS","gr"],["TEPUNG CAKRA","gr"],["BERAS SEDAP WANGI 25KG","gr"]]},
-  {title:"Bagian minuman",items:[["CUP 14 POLOS","pcs"],["CUP OVAL 16","pcs"],["CUP OVAL 18 DDR","pcs"],["KNORR LIME","gr"],["SIRUP DELIFRU PANDAN","gr"],["NESTLE CREAMER","gr"],["KOEPOE PASTA 60 ML","gr"],["GULA CAIR BTL","gr"],["SUSU CARNATION 365","gr"],["GARAM EKSPEDISI","gr"],["TEH CELUP SOSRO","pcs"]]},
-  {title:"Bagian minuman (2)",items:[["NESTLE MILO 45 GR","pcs"],["NESTEA GREEN TEA","pcs"],["TEH 25 GRAM DSM","pcs"]]},
+  {title:"Bagian minuman",items:[["CUP 14 POLOS","pcs"],["CUP OVAL 16","pcs"],["CUP OVAL 18 DDR","pcs"],["KNORR LIME","gr"],["SIRUP DELIFRU PANDAN","gr"],["NESTLE CREAMER","gr"],["KOEPOE PASTA 60 ML","gr"],["GULA CAIR BTL","gr"],["SUSU CARNATION 365","gr"],["GARAM EKSPEDISI","gr"]]},
+  {title:"Bagian minuman (2)",items:[["TEH CELUP SOSRO","pcs"],["NESTLE MILO 45 GR","pcs"],["NESTEA GREEN TEA","pcs"],["TEH 25 GRAM DSM","pcs"]]},
   {title:"Penyajian",items:[["DELMONTE EXTRAHOT","pcs"],["KERTAS PANJANG","pcs"],["KOTAK KARDUS DADAR BEREDAR","pcs"],["KRESEK BESAR PUTIH","pcs"],["POLYBAG 120 X 180","pcs"],["KRESEK KECIL UK 15","pcs"],["KRESEK 24","gr"]]},
   {title:"Depan",items:[["KECAP BANGO 1,5 L","gr"],["MAGIC LEZAT 1KG","gr"],["MINYAK SOVIA","gr"],["TELUR PER IKAT 15 KG",""],["SAOS TERIYAKI","gr"],["TEPUNG SYAZA","gr"],["SAUS BARBEQUE","gr"],["NASI MAGIC COM","gr"],["SAMBAL GP","gr"],["SAMBAL MASTER","gr"]]},
   {title:"Kasir",items:[["TEH PUCUK HARUM","pcs"],["LE MINERALE","pcs"],["KERUPUK PULI BERAS","pcs"],["KERUPUK PULI TEPUNG","pcs"],["KERUPUK KEDELAI","pcs"],["KERUPUK UYEL MAWAR","pcs"],["KERUPUK UDANG","pcs"],["KERUPUK RAMBAK","pcs"],["KERUPUK PASIR","pcs"],["KULIT KRISPI","pcs"],["USUS KRISPI","pcs"],["PEYEK KACANG","pcs"],["PEYEK UDANG REBON","pcs"]]}
@@ -545,71 +575,175 @@ const groupedNames=new Set(stokGroups.flatMap(g=>g.items.map(i=>i[0])));
 const missing=flatStokList.filter(n=>!groupedNames.has(n));
 if(missing.length) stokGroups.push({title:"Item tambahan dari format laporan",items:missing.map(n=>[n,"pcs"])});
 
-const $=id=>document.getElementById(id);
-const storageKey="gudang-harian-neo-v5-gps";
-let state={};
-let photosState={}; 
-let activePhotoKey = null;
+/* ---------- STATE & PENYIMPANAN ---------- */
+const storageKey="gudang-harian-neo-v6";          // teks/angka (kecil) -> localStorage
+const legacyKey="gudang-harian-neo-v5-gps";       // versi lama, dimigrasi otomatis
+let photosState={};                               // foto -> IndexedDB (tidak kena batas ~5MB)
+let activePhotoKey=null;
+let photoStoreOK=false;                           // IndexedDB berhasil dibuka?
+let photoPersistOK=true;                          // simpan foto terakhir berhasil?
+let lastSaveOK=true;                              // simpan teks terakhir berhasil?
 
-function showModal(title, msg, icon="🔥") {
-  $("modal-title").textContent = title;
-  $("modal-message").textContent = msg;
-  $("modal-icon").textContent = icon;
+// localStorage yang aman: kalau diblokir browser/preview, jatuh ke memori (tidak error)
+const Store=(()=>{
+  let ls=null;
+  try{ ls=window.localStorage; const k="__gh_test__"; ls.setItem(k,"1"); ls.removeItem(k); }catch(e){ ls=null; }
+  const mem={};
+  return {
+    persistent:!!ls,
+    get(k){
+      try{ if(ls) return ls.getItem(k); }catch(e){}
+      return Object.prototype.hasOwnProperty.call(mem,k)?mem[k]:null;
+    },
+    set(k,v){
+      mem[k]=v;
+      if(!ls) return false;
+      try{ ls.setItem(k,v); return true; }catch(e){ return false; }
+    }
+  };
+})();
+
+// IndexedDB untuk foto (semua pemanggilan dibungkus, gagal = jatuh ke memori)
+const PhotoDB=(()=>{
+  let db=null;
+  function open(){
+    return new Promise(resolve=>{
+      let settled=false;
+      const done=ok=>{ if(!settled){ settled=true; resolve(ok); } };
+      const timer=setTimeout(()=>done(false),2500);
+      try{
+        if(!window.indexedDB){ clearTimeout(timer); return done(false); }
+        const req=indexedDB.open("gudang-harian-photos",1);
+        req.onupgradeneeded=()=>{ try{ req.result.createObjectStore("photos"); }catch(e){} };
+        req.onsuccess=()=>{ db=req.result; clearTimeout(timer); done(true); };
+        req.onerror=()=>{ clearTimeout(timer); done(false); };
+        req.onblocked=()=>{ clearTimeout(timer); done(false); };
+      }catch(e){ clearTimeout(timer); done(false); }
+    });
+  }
+  function run(mode,fn){
+    return new Promise(resolve=>{
+      if(!db) return resolve(false);
+      try{
+        const t=db.transaction("photos",mode);
+        fn(t.objectStore("photos"));
+        t.oncomplete=()=>resolve(true);
+        t.onerror=()=>resolve(false);
+        t.onabort=()=>resolve(false);
+      }catch(e){ resolve(false); }
+    });
+  }
+  function getAll(){
+    return new Promise(resolve=>{
+      if(!db) return resolve({});
+      const out={};
+      try{
+        const t=db.transaction("photos","readonly");
+        const req=t.objectStore("photos").openCursor();
+        req.onsuccess=()=>{ const c=req.result; if(c){ out[c.key]=c.value; c.continue(); } };
+        t.oncomplete=()=>resolve(out);
+        t.onerror=()=>resolve(out);
+        t.onabort=()=>resolve(out);
+      }catch(e){ resolve(out); }
+    });
+  }
+  return {
+    open,
+    getAll,
+    put:(k,v)=>run("readwrite",s=>s.put(v,k)),
+    del:k=>run("readwrite",s=>s.delete(k)),
+    clear:()=>run("readwrite",s=>s.clear())
+  };
+})();
+
+// Elemen yang boleh disimpan/dipulihkan. INPUT FILE SENGAJA DIKECUALIKAN:
+// browser melarang mengisi value input file (error) -> inilah penyebab halaman "macet".
+function isSavable(el){
+  return !!el && !el.readOnly && el.type!=="file" && !["search-stok","search-pasar"].includes(el.id);
+}
+
+function setStatus(){
+  const el=$("save-status");
+  if(!el) return;
+  const hasPhotos=Object.keys(photosState).length>0;
+  if(!Store.persistent) el.textContent="⚠️ Browser memblokir penyimpanan — data hanya di memori, jangan tutup halaman";
+  else if(!lastSaveOK) el.textContent="⚠️ Penyimpanan browser penuh";
+  else if(hasPhotos && !(photoStoreOK && photoPersistOK)) el.textContent="⚠️ Foto belum bisa disimpan permanen (hanya di memori)";
+  else el.textContent="💾 Tersimpan otomatis";
+}
+
+function saveState(){
+  const data={};
+  document.querySelectorAll("input[id],textarea[id],select[id]").forEach(el=>{
+    if(isSavable(el) && !["global-shift","global-pos"].includes(el.id)) data[el.id]=el.value;
+  });
+  data._shift=$("global-shift").value;
+  data._pos=$("global-pos").value;
+  lastSaveOK=Store.set(storageKey,JSON.stringify(data));
+  setStatus();
+  updateSummary();
+}
+
+// Kembalikan foto lama (kalau ada) dari versi sebelumnya supaya bisa dimigrasi
+function restoreState(){
+  let raw=Store.get(storageKey), legacy=false;
+  if(!raw){ raw=Store.get(legacyKey); legacy=!!raw; }
+  let data={};
+  try{ data=JSON.parse(raw||"{}")||{}; }catch(e){ data={}; }
+
+  const setVal=(id,v)=>{
+    try{
+      const el=$(id);
+      if(isSavable(el) && typeof v==="string") el.value=v;
+    }catch(e){}
+  };
+  if(data._shift) setVal("global-shift",data._shift);
+  if(data._pos) setVal("global-pos",data._pos);
+  Object.keys(data).forEach(id=>{ if(id.charAt(0)!=="_") setVal(id,data[id]); });
+
+  // Kalau tanggal belum ada, isi hari ini (tetap bisa diubah manual)
+  if(!$("global-date").value) $("global-date").value=todayISO();
+
+  return (legacy && data._photos && typeof data._photos==="object") ? data._photos : null;
+}
+
+/* ---------- UI HELPERS ---------- */
+let confirmCb=null;
+function closeModal(){
+  $("custom-modal").classList.add("hidden");
+}
+function showModal(title,msg,icon="🔥"){
+  confirmCb=null;
+  $("modal-title").textContent=title;
+  $("modal-message").textContent=msg;
+  $("modal-icon").textContent=icon;
+  $("modal-cancel").classList.add("hidden");
+  $("modal-close").textContent="OK, Mengerti";
   $("custom-modal").classList.remove("hidden");
 }
-$("modal-close").addEventListener("click", () => $("custom-modal").classList.add("hidden"));
+// Konfirmasi buatan sendiri (confirm() bawaan sering diblokir di preview/WebView)
+function askConfirm(title,msg,icon,onYes){
+  showModal(title,msg,icon);
+  confirmCb=onYes;
+  $("modal-cancel").classList.remove("hidden");
+  $("modal-close").textContent="Ya, lanjut";
+}
 
 /* ---------- TANGGAL MANUAL ---------- */
 // Format YYYY-MM-DD dari tanggal lokal perangkat (bukan UTC)
 function todayISO(){
-  const d = new Date();
+  const d=new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
 }
 // Ambil tanggal yang dipilih user sebagai objek Date lokal; fallback ke hari ini
 function getSelectedDate(){
-  const v = $("global-date") ? $("global-date").value : "";
-  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v);
+  const v=$("global-date")?$("global-date").value:"";
+  const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(v);
   if(!m) return new Date();
-  return new Date(Number(m[1]), Number(m[2])-1, Number(m[3]));
+  return new Date(Number(m[1]),Number(m[2])-1,Number(m[3]));
 }
 
-function readState(){
-  try{return JSON.parse(localStorage.getItem(storageKey)||"{}")}catch(e){return {}}
-}
-function saveState(){
-  state={};
-  document.querySelectorAll("input[id],textarea[id],select[id]").forEach(el=>{
-    if(!el.readOnly && !["search-stok","search-pasar","global-shift","global-pos"].includes(el.id)) {
-      state[el.id]=el.value;
-    }
-  });
-  state["_shift"] = $("global-shift").value;
-  state["_pos"] = $("global-pos").value;
-  state["_photos"] = photosState;
-  try{
-    localStorage.setItem(storageKey,JSON.stringify(state));
-    $("save-status").textContent="💾 Tersimpan otomatis";
-  }catch(e){
-    $("save-status").textContent="⚠️ Penyimpanan lokal penuh";
-  }
-  updateSummary();
-}
-function restoreState(){
-  state=readState();
-  if(state["_shift"]) $("global-shift").value = state["_shift"];
-  if(state["_pos"]) $("global-pos").value = state["_pos"];
-  if(state["_photos"]) photosState = state["_photos"];
-
-  Object.entries(state).forEach(([id,val])=>{
-    if(id.startsWith("_")) return;
-    const el=$(id);
-    if(el && !el.readOnly) el.value=val;
-  });
-  // Kalau belum ada tanggal tersimpan, isi default hari ini (masih bisa diubah manual)
-  if(!$("global-date").value) $("global-date").value = todayISO();
-  updatePhotoIndicators();
-}
-
+/* ---------- RENDER ---------- */
 function renderDynamicInputs(){
   $("dp-inputs").innerHTML=dpItems.map(item=>`
     <div class="flex items-center justify-between gap-3 bg-[#fcf8f2] p-3 rounded-xl border-2 border-[#172923] shadow-[2px_2px_0px_#172923]">
@@ -702,14 +836,14 @@ function switchTab(id){
   $(`tab-${id}`).classList.add("active");
   const btn = document.querySelector(`.nav-btn[data-tab="${id}"]`);
   if(btn) btn.classList.add("active");
-  window.scrollTo({top:0,behavior:"smooth"});
+  try{ window.scrollTo({top:0,behavior:"smooth"}); }catch(e){}
 }
 
 function generateReports(){
   // Pakai tanggal yang dipilih manual di header
   const sel=getSelectedDate(),months=["JANUARI","FEBRUARI","MARET","APRIL","MEI","JUNI","JULI","AGUSTUS","SEPTEMBER","OKTOBER","NOVEMBER","DESEMBER"],tgl=`${sel.getDate()}-${sel.getMonth()+1}-${sel.getFullYear()}`,shift=$("global-shift").value,pos=$("global-pos").value;
-  
-  let stok=`SISA STOCK CLOSING SETIAP SHIFT ${months[sel.getMonth()]} ${tgl} SHIFT ${shift}*\n`;
+
+  let stok=`SISA STOCK CLOSING SETIAP SHIFT ${months[sel.getMonth()]} ${tgl} SHIFT ${shift} (POS: ${pos})*\n`;
   flatStokList.forEach(name=>{
     const unit=itemUnit[name]||"pcs";
     stok+=`${name} : ${reportVal(`input-stok-${name}`,unit==="gr"?"gr":unit)}\n`;
@@ -722,10 +856,10 @@ function generateReports(){
   });
   $("output-pasar").value=pasar.trim();
 
-  let pakai=`*PEMAKAIAN DP, TELUR DAN GUDANG SHIFT ${shift} TGL ${tgl}*\n\n*PEMAKAIAN DP*\n`;
+  let pakai=`*PEMAKAIAN DP, TELUR DAN GUDANG SHIFT ${shift} (${pos}) TGL ${tgl}*\n\n*PEMAKAIAN DP*\n`;
   dpItems.forEach(item=>pakai+=`${item} : ${val(`dp-${item}`)||"-"}\n`);
   pakai+=`\n*PENGAMBILAN TELUR*\n${val("val-pengambilan-telur")||"-"} butir\n\n*PEMAKAIAN TELUR DADAR*\n${val("val-pemakaian-telur-dadar")||"-"} batch\n\n*SISA TELUR*\n${val("val-sisa-telur")||"-"} butir\n\n*PEMAKAIAN DAPUR BELAKANG*\nShift : ${shift.toLowerCase()} (${pos})\nTgl : ${tgl}\n\n*CEKER CRISPY*\nPemakaian : ${val("cc-pakai")||"-"} porsi\nProses : ${val("cc-proses")||"-"}\nSisa : ${val("cc-sisa")||"-"}\n\n*DAPUR DEPAN*\n\n*DADAR JAGUNG*\n${val("dd-batch")||"-"} batch\n\n*CEPLOK*\n${val("ceplok-val")||"-"}\n\n*GUDANG*\n${val("gudang-pemakaian-lain")||"-"}`;
-  
+
   $("output-pemakaian").value=pakai;
   saveState();
   switchTab("laporan");
@@ -738,29 +872,37 @@ async function copyText(id){
     showModal("Perhatian", "Silakan buat laporan terlebih dahulu dengan menekan tombol Buat Laporan.", "⚠️");
     return;
   }
+  let ok=false;
   try{
     await navigator.clipboard.writeText(text);
+    ok=true;
   }catch(e){
-    $(id).select();
-    document.execCommand("copy");
+    try{
+      $(id).select();
+      ok=document.execCommand("copy");
+    }catch(e2){}
   }
-  showModal("Berhasil Disalin!", "Laporan siap ditempel (paste) ke WhatsApp.", "📋");
+  if(ok) showModal("Berhasil Disalin!", "Laporan siap ditempel (paste) ke WhatsApp.", "📋");
+  else showModal("Gagal Menyalin", "Browser memblokir salin otomatis. Tekan lama pada kotak laporan lalu pilih Salin.", "⚠️");
 }
 
 function resetShift(){
-  if(confirm("Kosongkan semua input dan foto untuk shift ini?")) {
-    document.querySelectorAll("input[id],textarea[id]").forEach(el=>{
-      // Tanggal tidak ikut dikosongkan
-      if(!el.readOnly && !["search-stok","search-pasar","global-date"].includes(el.id)) el.value="";
-    });
-    photosState = {};
-    $("output-stok").value="";
-    $("output-pasar").value="";
-    $("output-pemakaian").value="";
-    saveState();
-    updatePhotoIndicators();
-    switchTab("dp");
-  }
+  askConfirm("Kosongkan Shift?","Semua input dan foto shift ini akan dihapus. Tanggal tidak ikut dihapus.","🗑️",doReset);
+}
+async function doReset(){
+  document.querySelectorAll("input[id],textarea[id]").forEach(el=>{
+    if(isSavable(el) && el.id!=="global-date") el.value="";
+  });
+  document.querySelectorAll(".file-input").forEach(el=>{ try{ el.value=""; }catch(e){} });
+  photosState={};
+  photoPersistOK=true;
+  if(photoStoreOK) await PhotoDB.clear();
+  $("output-stok").value="";
+  $("output-pasar").value="";
+  $("output-pemakaian").value="";
+  saveState();
+  updatePhotoIndicators();
+  switchTab("dp");
 }
 
 function filterRows(inputId,rowSelector){
@@ -776,60 +918,74 @@ function filterRows(inputId,rowSelector){
   }
 }
 
-// High-accuracy GPS & Timestamp Watermark Canvas Generator
-// Catatan: watermark foto sengaja tetap memakai waktu asli perangkat (sebagai bukti),
-// tidak mengikuti tanggal manual di header.
+/* ---------- FOTO + WATERMARK GPS ---------- */
+// Foto diperkecil (sisi terpanjang maks 1600px) supaya ringan disimpan & di-ZIP.
+// Watermark memakai waktu asli perangkat (bukti), tidak mengikuti tanggal manual di header.
+const MAX_SIDE=1600, JPEG_Q=0.82;
+const DEFAULT_L2="Pakemitan,Kecamatan Cinambo";
+const DEFAULT_L3="Kota Bandung\nJawa Barat";
+
 function processImageWithGPSWatermark(file, callback){
-  const reader = new FileReader();
-  reader.onload = function(e){
-    const img = new Image();
-    img.onload = function(){
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-      canvas.width = img.width;
-      canvas.height = img.height;
-      ctx.drawImage(img, 0, 0);
+  const objUrl=URL.createObjectURL(file);
+  const img=new Image();
+  img.onload=function(){
+    URL.revokeObjectURL(objUrl);
+    let w=img.naturalWidth||img.width, h=img.naturalHeight||img.height;
+    const ratio=Math.min(1, MAX_SIDE/Math.max(w,h));
+    w=Math.round(w*ratio); h=Math.round(h*ratio);
 
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          async (pos) => {
-            const lat = pos.coords.latitude;
-            const lon = pos.coords.longitude;
-            let locationName = "Pakemitan,Kecamatan Cinambo";
-            let cityName = "Kota Bandung\nJawa Barat";
+    const canvas=document.createElement("canvas");
+    canvas.width=w; canvas.height=h;
+    const ctx=canvas.getContext("2d");
+    ctx.drawImage(img,0,0,w,h);
 
-            try {
-              const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
-              const data = await res.json();
-              if(data && data.address){
-                const sub = data.address.village || data.address.suburb || data.address.neighbourhood || "Pakemitan";
-                const dist = data.address.city_district || data.address.town || data.address.county || "Kecamatan Cinambo";
-                const city = data.address.city || data.address.state || "Kota Bandung";
-                const state = data.address.state || "Jawa Barat";
-                locationName = `${sub}, ${dist}`;
-                cityName = `${city}\n${state}`;
-              }
-            } catch(err) {
-              console.log("Nominatim reverse geocode fallback used");
-            }
-
-            drawWatermark(canvas, ctx, locationName, cityName);
-            callback(canvas.toDataURL("image/jpeg", 0.9));
-          },
-          (err) => {
-            drawWatermark(canvas, ctx, "Pakemitan,Kecamatan Cinambo", "Kota Bandung\nJawa Barat");
-            callback(canvas.toDataURL("image/jpeg", 0.9));
-          },
-          { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
-        );
-      } else {
-        drawWatermark(canvas, ctx, "Pakemitan,Kecamatan Cinambo", "Kota Bandung\nJawa Barat");
-        callback(canvas.toDataURL("image/jpeg", 0.9));
-      }
+    let finished=false;
+    const finish=(l2,l3)=>{
+      if(finished) return;
+      finished=true;
+      drawWatermark(canvas,ctx,l2,l3);
+      callback(canvas.toDataURL("image/jpeg",JPEG_Q));
     };
-    img.src = e.target.result;
+    // Pengaman: kalau GPS/geocode macet, tetap lanjut pakai lokasi default
+    const hardTimer=setTimeout(()=>finish(DEFAULT_L2,DEFAULT_L3),18000);
+
+    if(navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(
+        async (pos)=>{
+          let l2=DEFAULT_L2, l3=DEFAULT_L3;
+          try{
+            const ctrl=new AbortController();
+            const t=setTimeout(()=>ctrl.abort(),5000);
+            const res=await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`,{signal:ctrl.signal});
+            clearTimeout(t);
+            const data=await res.json();
+            if(data && data.address){
+              const sub = data.address.village || data.address.suburb || data.address.neighbourhood || "Pakemitan";
+              const dist = data.address.city_district || data.address.town || data.address.county || "Kecamatan Cinambo";
+              const city = data.address.city || data.address.state || "Kota Bandung";
+              const state = data.address.state || "Jawa Barat";
+              l2 = `${sub}, ${dist}`;
+              l3 = `${city}\n${state}`;
+            }
+          }catch(err){
+            console.log("Nominatim reverse geocode fallback used");
+          }
+          clearTimeout(hardTimer);
+          finish(l2,l3);
+        },
+        ()=>{ clearTimeout(hardTimer); finish(DEFAULT_L2,DEFAULT_L3); },
+        { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
+      );
+    } else {
+      clearTimeout(hardTimer);
+      finish(DEFAULT_L2,DEFAULT_L3);
+    }
   };
-  reader.readAsDataURL(file);
+  img.onerror=function(){
+    URL.revokeObjectURL(objUrl);
+    callback(null);
+  };
+  img.src=objUrl;
 }
 
 function drawWatermark(canvas, ctx, line2Text, line3Text) {
@@ -884,7 +1040,7 @@ async function downloadAllPhotosAsZip() {
   }
 
   showModal("Menyiapkan ZIP...", "Sedang mengemas semua foto ber-watermark GPS...", "⏳");
-  
+
   const dateStr = $("global-date").value || todayISO();
   const zip = new JSZip();
   const folder = zip.folder("gudang_photos_" + dateStr);
@@ -905,21 +1061,17 @@ async function downloadAllPhotosAsZip() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    $("custom-modal").classList.add("hidden");
     showModal("Berhasil Diunduh!", "File ZIP berisi semua foto berhasil diunduh ke perangkat Anda.", "📦");
   } catch(err) {
-    $("custom-modal").classList.add("hidden");
     showModal("Gagal", "Terjadi kesalahan saat membuat file ZIP.", "❌");
   }
 }
 
-renderDynamicInputs();
-restoreState();
-updateSummary();
-
+/* ---------- EVENT LISTENERS (dipasang DULU, sebelum memuat data) ---------- */
 document.querySelectorAll(".nav-btn").forEach(btn=>btn.addEventListener("click",()=>switchTab(btn.dataset.tab)));
+
 document.addEventListener("input",e=>{
-  if(e.target.matches("input[id],textarea[id],select[id]")&&!["search-stok","search-pasar"].includes(e.target.id)){
+  if(e.target.matches("input[id],textarea[id],select[id]") && isSavable(e.target)){
     saveState();
   }
 });
@@ -934,7 +1086,8 @@ document.addEventListener("click", e => {
       $("photo-modal-img").src = photosState[key];
       $("photo-modal").classList.remove("hidden");
     } else {
-      $(`file-${key}`).click();
+      const fi=$(`file-${key}`);
+      if(fi) fi.click();
     }
   }
 });
@@ -943,24 +1096,41 @@ document.addEventListener("change", e => {
   if(e.target.matches(".file-input")){
     const fileInput = e.target;
     const key = fileInput.dataset.key;
-    if(fileInput.files && fileInput.files[0]){
+    const file = fileInput.files && fileInput.files[0];
+    if(file){
       showModal("Memproses GPS...", "Mengambil koordinat lokasi akurat & menambahkan cap waktu pada foto...", "⏳");
-      processImageWithGPSWatermark(fileInput.files[0], (watermarkedDataUrl) => {
+      processImageWithGPSWatermark(file, async (watermarkedDataUrl) => {
+        try{ fileInput.value=""; }catch(err){}   // boleh dikosongkan; supaya bisa foto ulang
+        if(!watermarkedDataUrl){
+          showModal("Gagal", "Foto tidak bisa dibaca. Coba ambil ulang.", "❌");
+          return;
+        }
         photosState[key] = watermarkedDataUrl;
+        if(photoStoreOK) photoPersistOK = await PhotoDB.put(key, watermarkedDataUrl);
         saveState();
         updatePhotoIndicators();
-        $("custom-modal").classList.add("hidden");
         showModal("Foto GPS Disimpan", "Foto dengan cap waktu dan lokasi berhasil disimpan otomatis.", "📸");
       });
     }
   }
 });
 
+$("modal-close").addEventListener("click", () => {
+  const cb=confirmCb;
+  confirmCb=null;
+  closeModal();
+  if(cb) cb();
+});
+$("modal-cancel").addEventListener("click", () => { confirmCb=null; closeModal(); });
+$("err-close").addEventListener("click", () => $("err-banner").classList.add("hidden"));
+
 $("photo-modal-close").addEventListener("click", () => $("photo-modal").classList.add("hidden"));
 $("photo-modal-ok").addEventListener("click", () => $("photo-modal").classList.add("hidden"));
-$("photo-modal-del").addEventListener("click", () => {
+$("photo-modal-del").addEventListener("click", async () => {
   if(activePhotoKey && photosState[activePhotoKey]){
-    delete photosState[activePhotoKey];
+    const k=activePhotoKey;
+    delete photosState[k];
+    if(photoStoreOK) await PhotoDB.del(k);
     saveState();
     updatePhotoIndicators();
     $("photo-modal").classList.add("hidden");
@@ -986,6 +1156,33 @@ $("reset-btn").addEventListener("click", resetShift);
 document.querySelectorAll("[data-copy]").forEach(btn=>btn.addEventListener("click",()=>copyText(btn.dataset.copy)));
 $("search-stok").addEventListener("input",()=>filterRows("search-stok",".stock-row"));
 $("search-pasar").addEventListener("input",()=>filterRows("search-pasar",".pasar-row"));
+
+/* ---------- INIT ---------- */
+async function init(){
+  renderDynamicInputs();
+  const legacyPhotos=restoreState();      // teks/angka langsung kembali, UI sudah bisa dipakai
+  updateSummary();
+  setStatus();
+
+  photoStoreOK=await PhotoDB.open();
+  if(photoStoreOK) photosState=await PhotoDB.getAll();
+
+  // Migrasi foto dari versi lama (yang dulu disimpan di localStorage)
+  if(legacyPhotos){
+    for(const k of Object.keys(legacyPhotos)){
+      if(!photosState[k] && typeof legacyPhotos[k]==="string"){
+        photosState[k]=legacyPhotos[k];
+        if(photoStoreOK) photoPersistOK = await PhotoDB.put(k,legacyPhotos[k]);
+      }
+    }
+  }
+
+  saveState();
+  updatePhotoIndicators();
+  updateSummary();
+  setStatus();
+}
+init().catch(err=>showErr(err && err.message ? err.message : String(err)));
 </script>
 </body>
 </html>
