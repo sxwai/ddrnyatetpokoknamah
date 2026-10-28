@@ -6,8 +6,6 @@
 <meta name="theme-color" content="#ffd43b">
 <title>Gudang Harian — Pencatatan Operasional</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<!-- Include JSZip for bulk downloading photos -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -44,10 +42,8 @@
   button, input, textarea, select { font: inherit; }
   button { cursor: pointer; }
 
-  /* Pastikan modal & banner tetap tersembunyi walau CDN Tailwind gagal dimuat */
-  #photo-modal.hidden, #custom-modal.hidden, #err-banner.hidden { display: none !important; }
+  #custom-modal.hidden, #err-banner.hidden { display: none !important; }
 
-  /* Neo-brutalist Card Style */
   .neo-card {
     background: var(--paper);
     border: var(--border);
@@ -60,7 +56,6 @@
     box-shadow: 2px 2px 0px #172923;
   }
 
-  /* Buttons */
   .neo-btn {
     border: var(--border);
     border-radius: 14px;
@@ -80,9 +75,7 @@
   .neo-btn-mint { background: var(--mint); color: var(--ink); }
   .neo-btn-blue { background: var(--blue); color: var(--ink); }
   .neo-btn-pink { background: var(--pink); color: var(--ink); }
-  .neo-btn-dark { background: var(--ink); color: #fff; }
 
-  /* Inputs - Locked font size 16px on mobile to prevent iOS/Android automatic zoom / layout jump */
   input[type=number], input[type=text], select, textarea {
     border: var(--border);
     background: #fff;
@@ -97,16 +90,13 @@
     width: 100%;
   }
   @media (min-width: 640px) {
-    input[type=number], input[type=text], select, textarea {
-      font-size: 14px;
-    }
+    input[type=number], input[type=text], select, textarea { font-size: 14px; }
   }
   input:focus, textarea:focus, select:focus {
     background: #fffdf0;
     box-shadow: 3px 3px 0px #172923;
   }
 
-  /* Date input di header */
   #global-date {
     border: 2px solid #172923;
     background: #fff;
@@ -121,7 +111,6 @@
     min-height: 32px;
   }
 
-  /* App Header */
   .app-header {
     background: var(--yellow);
     border-bottom: var(--border);
@@ -132,7 +121,6 @@
     overflow: hidden;
   }
 
-  /* Bottom Navigation */
   .bottom-nav {
     position: fixed;
     z-index: 50;
@@ -174,7 +162,6 @@
     transform: translateY(-2px);
   }
 
-  /* Floating Action Button (FAB) */
   .fab-badge {
     background: var(--yellow);
     border: var(--border);
@@ -194,13 +181,8 @@
     z-index: 40;
     transition: all 0.15s ease;
   }
-  .fab-badge:hover {
-    transform: scale(1.08) rotate(5deg);
-  }
-  .fab-badge:active {
-    transform: translate(3px, 3px);
-    box-shadow: 1px 1px 0px #172923;
-  }
+  .fab-badge:hover { transform: scale(1.08) rotate(5deg); }
+  .fab-badge:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0px #172923; }
 
   .tab { display: none; }
   .tab.active { display: block; animation: fadeIn 0.15s ease-out; }
@@ -246,18 +228,16 @@
   <div class="max-w-2xl mx-auto flex justify-between items-center relative z-10">
     <div>
       <div class="flex items-center gap-2 mb-1">
-        <span class="bg-black text-yellow-300 text-[10px] uppercase font-black px-2 py-0.5 rounded-full border border-black">🍳 V1.7.2 Pro (ANYING)</span>
-        <span class="text-xs font-extrabold text-[#2a4439]">Pencatatan Operasional Dapur</span>
+        <span class="bg-black text-yellow-300 text-[10px] uppercase font-black px-2 py-0.5 rounded-full border border-black"> V2.1 Anying</span>
+        <span class="text-xs font-extrabold text-[#2a4439]">CATATAN HARIAN OPERASIONAL</span>
       </div>
-      <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-[#172923]">Gudang Harian DADAR BEREDAR</h1>
+      <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-[#172923]">🍳 DADAR BEREDAR</h1>
       <div class="text-xs font-bold text-[#355246] mt-2 flex items-center gap-1.5 flex-wrap">
         <span>📅</span>
         <input type="date" id="global-date" aria-label="Pilih tanggal laporan">
         <button type="button" id="date-today-btn" class="neo-btn bg-white px-2 py-1 text-[10px] font-black" title="Set ke tanggal hari ini">Hari ini</button>
       </div>
     </div>
-
-    <!-- Shift & POS Selector Dropdowns -->
     <div class="flex items-center gap-2">
       <div class="bg-white border-2 border-[#172923] p-1.5 rounded-xl shadow-[3px_3px_0px_#172923] flex items-center gap-1.5">
         <span class="text-[9px] font-black uppercase text-gray-500 hidden sm:inline">Shift:</span>
@@ -266,7 +246,6 @@
           <option value="SORE">SORE 🌙</option>
         </select>
       </div>
-
       <div class="bg-white border-2 border-[#172923] p-1.5 rounded-xl shadow-[3px_3px_0px_#172923] flex items-center gap-1.5">
         <span class="text-[9px] font-black uppercase text-gray-500 hidden sm:inline">POS:</span>
         <select id="global-pos" aria-label="Pilih POS" class="bg-transparent border-0 font-black text-xs text-[#172923] cursor-pointer outline-none p-0 shadow-none">
@@ -277,15 +256,13 @@
       </div>
     </div>
   </div>
-
   <div class="absolute -right-4 -bottom-6 w-20 h-20 bg-emerald-700 rounded-full border-2 border-black opacity-10 pointer-events-none"></div>
   <div class="absolute right-24 top-2 w-6 h-6 bg-pink-400 rotate-12 border-2 border-black pointer-events-none"></div>
 </header>
 
 <main class="max-w-2xl mx-auto px-4 mt-5">
 
-  <!-- DASHBOARD STATS SUMMARY -->
-  <section class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+  <section class="grid grid-cols-3 gap-3 mb-5">
     <div class="neo-card p-3.5 bg-white">
       <div class="text-[10px] font-black uppercase tracking-wider text-[#5e6d67]">Closing Stok</div>
       <div class="text-2xl font-black text-[#172923] mt-1" id="sum-stok">0</div>
@@ -301,55 +278,93 @@
       <div class="text-2xl font-black text-[#172923] mt-1" id="sum-datang">0/24</div>
       <div class="text-[10px] font-bold text-[#e67700] mt-0.5">Barang datang</div>
     </div>
-    <div class="neo-card p-3.5 bg-[#ffdeeb]">
-      <div class="text-[10px] font-black uppercase tracking-wider text-[#c2255c]">Foto</div>
-      <div class="text-2xl font-black text-[#172923] mt-1" id="sum-foto">0</div>
-      <div class="text-[10px] font-bold text-[#c2255c] mt-0.5">Tersimpan</div>
-    </div>
   </section>
 
-  <!-- TAB 1: DASHBOARD / PEMAKAIAN DP -->
-  <section id="tab-dp" class="tab active">
-    <div class="neo-card p-4 sm:p-6 mb-5">
-      <div class="flex items-start justify-between gap-3 mb-5 pb-3 border-b-2 border-[#172923]">
+  <!-- TAB KONSOLIDASI: OPERASIONAL -->
+  <section id="tab-operasional" class="tab active">
+    <div class="neo-card p-4 sm:p-6 mb-5 space-y-6">
+      <div class="flex items-start justify-between gap-3 pb-3 border-b-2 border-[#172923]">
         <div>
-          <h2 class="text-lg sm:text-xl font-black text-[#172923] flex items-center gap-2">📦 Pencatatan DP</h2>
-          <p class="text-xs font-bold text-[#5e6d67] mt-1">Masukkan jumlah kuantitas sesuai pemakaian shift ini.</p>
+          <h2 class="text-lg sm:text-xl font-black text-[#172923] flex items-center gap-2">⚙️ Input Operasional</h2>
+          <p class="text-xs font-bold text-[#5e6d67] mt-1">Gabungan pencatatan DP, Telur, Dapur Belakang & Depan.</p>
         </div>
-        <span class="badge-tag bg-[#ffd43b]">DP</span>
       </div>
-      <div id="dp-inputs" class="space-y-3"></div>
+
+      <!-- DP -->
+      <div>
+        <div class="text-xs font-black uppercase text-[#172923] bg-[#ffd43b] px-2.5 py-1 rounded-md border border-[#172923] inline-block mb-3">📦 Pencatatan DP</div>
+        <div id="dp-inputs" class="space-y-3"></div>
+      </div>
+
+      <hr class="border-[#172923] border-t-2">
+
+      <!-- TELUR -->
+      <div>
+        <div class="text-xs font-black uppercase text-[#172923] bg-[#b2f2bb] px-2.5 py-1 rounded-md border border-[#172923] inline-block mb-3">🥚 Pencatatan Telur</div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-[#fcf8f2] p-4 rounded-xl border-2 border-[#172923] shadow-[2px_2px_0px_#172923]">
+          <div class="space-y-1.5">
+            <label class="text-[11px] font-extrabold block text-[#172923]">Pengambilan (Butir)</label>
+            <input type="number" min="0" id="val-pengambilan-telur" placeholder="0">
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-[11px] font-extrabold block text-[#172923]">Pemakaian Dadar (Batch)</label>
+            <input type="number" min="0" id="val-pemakaian-telur-dadar" placeholder="0">
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-[11px] font-extrabold block text-[#172923]">Sisa Telur (Butir)</label>
+            <input type="number" min="0" id="val-sisa-telur" placeholder="0">
+          </div>
+        </div>
+      </div>
+
+      <hr class="border-[#172923] border-t-2">
+
+      <!-- PEMAKAIAN DAPUR BELAKANG -->
+      <div>
+        <div class="text-xs font-black uppercase text-[#172923] bg-[#a5d8ff] px-2.5 py-1 rounded-md border border-[#172923] inline-block mb-3">🍳 Pemakaian Dapur Belakang</div>
+        <div class="bg-[#fcf8f2] border-2 border-[#172923] p-4 rounded-xl shadow-[2px_2px_0px_#172923] space-y-4">
+          <div>
+            <label class="text-[11px] font-extrabold block mb-1">Ceker Crispy</label>
+            <div class="grid grid-cols-3 gap-3">
+              <div><input type="number" min="0" id="cc-pakai" placeholder="Pakai (Porsi)"></div>
+              <div><input type="number" min="0" id="cc-proses" placeholder="Proses"></div>
+              <div><input type="number" min="0" id="cc-sisa" placeholder="Sisa"></div>
+            </div>
+          </div>
+          <div>
+            <label for="dapur-belakang-lain" class="text-[11px] font-extrabold block mb-1">Catatan Tambahan Dapur Belakang</label>
+            <textarea id="dapur-belakang-lain" placeholder="Tulis catatan dapur belakang..." class="w-full h-20"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <hr class="border-[#172923] border-t-2">
+
+      <!-- PEMAKAIAN DAPUR DEPAN -->
+      <div>
+        <div class="text-xs font-black uppercase text-[#172923] bg-[#ffb156] px-2.5 py-1 rounded-md border border-[#172923] inline-block mb-3">🔥 Pemakaian Dapur Depan & Gudang</div>
+        <div class="bg-[#fcf8f2] border-2 border-[#172923] p-4 rounded-xl shadow-[2px_2px_0px_#172923] space-y-4">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="text-[11px] font-extrabold block mb-1">Dadar Jagung (Batch)</label>
+              <input type="number" min="0" id="dd-batch" placeholder="0">
+            </div>
+            <div>
+              <label class="text-[11px] font-extrabold block mb-1">Ceplok</label>
+              <input type="number" min="0" id="ceplok-val" placeholder="0">
+            </div>
+          </div>
+          <div>
+            <label for="gudang-pemakaian-lain" class="text-[11px] font-extrabold block mb-1">Catatan Gudang / Tambahan</label>
+            <textarea id="gudang-pemakaian-lain" placeholder="Tulis catatan operasional atau gudang tambahan..." class="w-full h-20"></textarea>
+          </div>
+        </div>
+      </div>
+
     </div>
   </section>
 
-  <!-- TAB 2: TELUR -->
-  <section id="tab-telur" class="tab">
-    <div class="neo-card p-4 sm:p-6 mb-5">
-      <div class="flex items-start justify-between gap-3 mb-5 pb-3 border-b-2 border-[#172923]">
-        <div>
-          <h2 class="text-lg sm:text-xl font-black text-[#172923] flex items-center gap-2">🥚 Pencatatan Telur</h2>
-          <p class="text-xs font-bold text-[#5e6d67] mt-1">Catat pengambilan, pemakaian, dan sisa telur.</p>
-        </div>
-        <span class="badge-tag bg-[#b2f2bb]">TELUR</span>
-      </div>
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div class="space-y-1.5">
-          <label class="text-xs font-black uppercase text-[#172923] block">Pengambilan Telur (Butir)</label>
-          <input type="number" min="0" id="val-pengambilan-telur" placeholder="0">
-        </div>
-        <div class="space-y-1.5">
-          <label class="text-xs font-black uppercase text-[#172923] block">Pemakaian Telur Dadar (Batch)</label>
-          <input type="number" min="0" id="val-pemakaian-telur-dadar" placeholder="0">
-        </div>
-        <div class="space-y-1.5">
-          <label class="text-xs font-black uppercase text-[#172923] block">Sisa Telur (Butir)</label>
-          <input type="number" min="0" id="val-sisa-telur" placeholder="0">
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- TAB 3: SISA STOK CLOSING -->
+  <!-- TAB: SISA STOK CLOSING -->
   <section id="tab-stok" class="tab">
     <div class="neo-card p-4 sm:p-6 mb-5">
       <div class="flex items-start justify-between gap-3 mb-4 pb-3 border-b-2 border-[#172923]">
@@ -366,13 +381,13 @@
     </div>
   </section>
 
-  <!-- TAB 4: SISA STOK PASAR -->
+  <!-- TAB: SISA STOK PASAR -->
   <section id="tab-pasar" class="tab">
     <div class="neo-card p-4 sm:p-6 mb-5">
       <div class="flex items-start justify-between gap-3 mb-4 pb-3 border-b-2 border-[#172923]">
         <div>
           <h2 class="text-lg sm:text-xl font-black text-[#172923] flex items-center gap-2">🥬 Sisa Stok Pasar</h2>
-          <p class="text-xs font-bold text-[#5e6d67] mt-1">Input sisa stock pasar</p>
+          <p class="text-xs font-bold text-[#5e6d67] mt-1">Input sisa stock pasar (Telah diurutkan A-Z)</p>
         </div>
         <span class="badge-tag bg-[#ff8787]">PASAR</span>
       </div>
@@ -383,13 +398,13 @@
     </div>
   </section>
 
-  <!-- TAB 4.5: DATANG PASAR -->
+  <!-- TAB: DATANG PASAR -->
   <section id="tab-datang" class="tab">
     <div class="neo-card p-4 sm:p-6 mb-5">
       <div class="flex items-start justify-between gap-3 mb-4 pb-3 border-b-2 border-[#172923]">
         <div>
           <h2 class="text-lg sm:text-xl font-black text-[#172923] flex items-center gap-2">🚚 Datang Pasar</h2>
-          <p class="text-xs font-bold text-[#5e6d67] mt-1">Input jumlah bahan pasar yang datang (kosongkan jika tidak ada)</p>
+          <p class="text-xs font-bold text-[#5e6d67] mt-1">Input jumlah bahan pasar yang datang</p>
         </div>
         <span class="badge-tag bg-[#ffd43b]">DATANG</span>
       </div>
@@ -400,59 +415,57 @@
     </div>
   </section>
 
-  <!-- TAB 5: PEMAKAIAN OPERASIONAL -->
-  <section id="tab-pemakaian" class="tab">
+  <!-- TAB GRAMASI & SISA -->
+  <section id="tab-gramasi" class="tab">
+    <!-- GRAMASI PROSESAN -->
     <div class="neo-card p-4 sm:p-6 mb-5">
       <div class="flex items-start justify-between gap-3 mb-4 pb-3 border-b-2 border-[#172923]">
         <div>
-          <h2 class="text-lg sm:text-xl font-black text-[#172923] flex items-center gap-2">⚙️ Pemakaian Operasional</h2>
-          <p class="text-xs font-bold text-[#5e6d67] mt-1">Isi angka sesuai aktivitas dapur sesuai shift.</p>
+          <h2 class="text-lg sm:text-xl font-black text-[#172923] flex items-center gap-2">⚖️ Gramasi Prosesan</h2>
+          <p class="text-xs font-bold text-[#5e6d67] mt-1">Tekan <b>+ Tambah</b> untuk membuat baris input baru.</p>
         </div>
-        <span class="badge-tag bg-[#ffb156]">OPS</span>
+        <span class="badge-tag bg-[#a5d8ff]">GRAMASI</span>
       </div>
+      <div class="space-y-4" id="gramasi-container">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
 
-      <div class="space-y-4">
-        <div class="bg-[#fcf8f2] border-2 border-[#172923] p-4 rounded-xl shadow-[2px_2px_0px_#172923]">
-          <div class="text-xs font-black uppercase text-[#172923] bg-[#ffd43b] px-2.5 py-1 rounded-md border border-[#172923] inline-block mb-3">Ceker Crispy</div>
-          <div class="grid grid-cols-3 gap-3">
-            <div>
-              <label class="text-[11px] font-extrabold block mb-1">Pakai (Porsi)</label>
-              <input type="number" min="0" id="cc-pakai" placeholder="0">
-            </div>
-            <div>
-              <label class="text-[11px] font-extrabold block mb-1">Proses</label>
-              <input type="number" min="0" id="cc-proses" placeholder="0">
-            </div>
-            <div>
-              <label class="text-[11px] font-extrabold block mb-1">Sisa</label>
-              <input type="number" min="0" id="cc-sisa" placeholder="0">
-            </div>
+    <!-- SISA OSENGAN & DP BUKA -->
+    <div class="neo-card p-4 sm:p-6 mb-5">
+      <div class="flex items-start justify-between gap-3 mb-4 pb-3 border-b-2 border-[#172923]">
+        <div>
+          <h2 class="text-lg sm:text-xl font-black text-[#172923] flex items-center gap-2">📦 Sisa Osengan & Bahan DP</h2>
+          <p class="text-xs font-bold text-[#5e6d67] mt-1">Masukkan sisa dalam hitungan Gram (gr).</p>
+        </div>
+        <span class="badge-tag bg-[#ffb156]">SISA DP</span>
+      </div>
+      <div class="space-y-6">
+        <div>
+          <div class="text-xs font-black uppercase text-[#172923] bg-[#ffd43b] px-2.5 py-1 rounded-md border border-[#172923] inline-block mb-3">Sisa Osengan (gr)</div>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div><label class="text-[11px] font-extrabold block mb-1">Ayam Suwir</label><input type="number" step="any" id="sisa-oseng-suwir" placeholder="0"></div>
+            <div><label class="text-[11px] font-extrabold block mb-1">Cumi</label><input type="number" step="any" id="sisa-oseng-cumi" placeholder="0"></div>
+            <div><label class="text-[11px] font-extrabold block mb-1">Ceker</label><input type="number" step="any" id="sisa-oseng-ceker" placeholder="0"></div>
+            <div><label class="text-[11px] font-extrabold block mb-1">Kulit</label><input type="number" step="any" id="sisa-oseng-kulit" placeholder="0"></div>
+            <div><label class="text-[11px] font-extrabold block mb-1">Paru</label><input type="number" step="any" id="sisa-oseng-paru" placeholder="0"></div>
           </div>
         </div>
-
-        <div class="bg-[#fcf8f2] border-2 border-[#172923] p-4 rounded-xl shadow-[2px_2px_0px_#172923]">
-          <div class="text-xs font-black uppercase text-[#172923] bg-[#b2f2bb] px-2.5 py-1 rounded-md border border-[#172923] inline-block mb-3">Pemakaian ceker,ceplok</div>
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label class="text-[11px] font-extrabold block mb-1">Dadar Jagung (Batch)</label>
-              <input type="number" min="0" id="dd-batch" placeholder="0">
-            </div>
-            <div>
-              <label class="text-[11px] font-extrabold block mb-1">Ceplok</label>
-              <input type="number" min="0" id="ceplok-val" placeholder="0">
-            </div>
+        <div>
+          <div class="text-xs font-black uppercase text-[#172923] bg-[#b2f2bb] px-2.5 py-1 rounded-md border border-[#172923] inline-block mb-3">Sisa Bahan DP Terbuka (gr)</div>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div><label class="text-[11px] font-extrabold block mb-1">Ayam Suwir</label><input type="number" step="any" id="sisa-dpbuka-suwir" placeholder="0"></div>
+            <div><label class="text-[11px] font-extrabold block mb-1">Cumi</label><input type="number" step="any" id="sisa-dpbuka-cumi" placeholder="0"></div>
+            <div><label class="text-[11px] font-extrabold block mb-1">Ceker</label><input type="number" step="any" id="sisa-dpbuka-ceker" placeholder="0"></div>
+            <div><label class="text-[11px] font-extrabold block mb-1">Kulit</label><input type="number" step="any" id="sisa-dpbuka-kulit" placeholder="0"></div>
+            <div><label class="text-[11px] font-extrabold block mb-1">Paru</label><input type="number" step="any" id="sisa-dpbuka-paru" placeholder="0"></div>
           </div>
-        </div>
-
-        <div class="bg-[#fcf8f2] border-2 border-[#172923] p-4 rounded-xl shadow-[2px_2px_0px_#172923]">
-          <label for="gudang-pemakaian-lain" class="text-xs font-black uppercase text-[#172923] block mb-2">Catatan Gudang / Tambahan</label>
-          <textarea id="gudang-pemakaian-lain" placeholder="Tulis catatan operasional atau gudang tambahan..." class="w-full"></textarea>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- TAB 6: LAPORAN -->
+  <!-- TAB: LAPORAN -->
   <section id="tab-laporan" class="tab">
     <div class="neo-card p-4 sm:p-6 mb-5">
       <div class="flex items-start justify-between gap-3 mb-4 pb-3 border-b-2 border-[#172923]">
@@ -463,42 +476,54 @@
         <span class="badge-tag bg-[#ffd43b]">REPORT</span>
       </div>
 
-      <button class="neo-btn neo-btn-yellow w-full py-4 text-sm font-black shadow-[4px_4px_0px_#172923] mb-4" id="generate-btn">
+      <button class="neo-btn neo-btn-yellow w-full py-4 text-sm font-black shadow-[4px_4px_0px_#172923] mb-6" id="generate-btn">
         🚀 BUAT SEMUA LAPORAN SEKARANG
-      </button>
-
-      <button class="neo-btn neo-btn-mint w-full py-3.5 text-xs font-black shadow-[3px_3px_0px_#172923] mb-6" id="download-all-photos-btn">
-        📥 DOWNLOAD SEMUA FOTO (ZIP)
       </button>
 
       <div class="space-y-5">
         <div>
-          <div class="text-xs font-black uppercase mb-1.5 text-[#172923] flex items-center gap-1.5">📦 1. Laporan Sisa Stok Closing</div>
-          <textarea id="output-stok" class="report-box w-full" readonly placeholder="Tekan tombol buat laporan di atas..."></textarea>
+          <div class="text-xs font-black uppercase mb-1.5 text-[#172923] flex items-center gap-1.5">⚖️ 1. Laporan Gramasi Prosesan</div>
+          <textarea id="output-gramasi" class="report-box w-full" readonly placeholder="Laporan prosesan gramasi osengan..."></textarea>
           <div class="mt-2 flex justify-end">
-            <button class="neo-btn neo-btn-mint px-4 py-2 text-xs font-black" data-copy="output-stok">📋 Salin Laporan Closing</button>
+            <button class="neo-btn neo-btn-mint px-4 py-2 text-xs font-black" data-copy="output-gramasi">📋 Salin Prosesan</button>
           </div>
         </div>
 
         <div>
-          <div class="text-xs font-black uppercase mb-1.5 text-[#172923] flex items-center gap-1.5">🥬 2. Laporan Sisa Stok Pasar</div>
-          <textarea id="output-pasar" class="report-box w-full" readonly placeholder="Laporan stok pasar akan muncul di sini..."></textarea>
+          <div class="text-xs font-black uppercase mb-1.5 text-[#172923] flex items-center gap-1.5">📦 2. Laporan Sisa Bahan DP Ujung Berung</div>
+          <textarea id="output-sisadp" class="report-box w-full" readonly placeholder="Laporan sisa osengan dan DP buka..."></textarea>
           <div class="mt-2 flex justify-end">
-            <button class="neo-btn neo-btn-blue px-4 py-2 text-xs font-black" data-copy="output-pasar">📋 Salin Laporan Pasar</button>
+            <button class="neo-btn neo-btn-blue px-4 py-2 text-xs font-black" data-copy="output-sisadp">📋 Salin Sisa DP</button>
           </div>
         </div>
 
         <div>
-          <div class="text-xs font-black uppercase mb-1.5 text-[#172923] flex items-center gap-1.5">🚚 3. Laporan Datang Pasar</div>
-          <textarea id="output-datang" class="report-box w-full" readonly placeholder="Laporan datang pasar akan muncul di sini..."></textarea>
+          <div class="text-xs font-black uppercase mb-1.5 text-[#172923] flex items-center gap-1.5">📋 3. Laporan Sisa Stok Closing</div>
+          <textarea id="output-stok" class="report-box w-full" readonly placeholder="Laporan stok closing..."></textarea>
           <div class="mt-2 flex justify-end">
-            <button class="neo-btn neo-btn-yellow px-4 py-2 text-xs font-black" data-copy="output-datang">📋 Salin Laporan Datang</button>
+            <button class="neo-btn neo-btn-yellow px-4 py-2 text-xs font-black" data-copy="output-stok">📋 Salin Laporan Closing</button>
           </div>
         </div>
 
         <div>
-          <div class="text-xs font-black uppercase mb-1.5 text-[#172923] flex items-center gap-1.5">⚙️ 4. Laporan Pemakaian & Telur</div>
-          <textarea id="output-pemakaian" class="report-box w-full" readonly placeholder="Laporan pemakaian akan muncul di sini..."></textarea>
+          <div class="text-xs font-black uppercase mb-1.5 text-[#172923] flex items-center gap-1.5">🥬 4. Laporan Sisa Stok Pasar</div>
+          <textarea id="output-pasar" class="report-box w-full" readonly placeholder="Laporan stok pasar..."></textarea>
+          <div class="mt-2 flex justify-end">
+            <button class="neo-btn neo-btn-mint px-4 py-2 text-xs font-black" data-copy="output-pasar">📋 Salin Laporan Pasar</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="text-xs font-black uppercase mb-1.5 text-[#172923] flex items-center gap-1.5">🚚 5. Laporan Datang Pasar</div>
+          <textarea id="output-datang" class="report-box w-full" readonly placeholder="Laporan datang pasar..."></textarea>
+          <div class="mt-2 flex justify-end">
+            <button class="neo-btn neo-btn-blue px-4 py-2 text-xs font-black" data-copy="output-datang">📋 Salin Laporan Datang</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="text-xs font-black uppercase mb-1.5 text-[#172923] flex items-center gap-1.5">⚙️ 6. Laporan Pemakaian & Telur</div>
+          <textarea id="output-pemakaian" class="report-box w-full" readonly placeholder="Laporan pemakaian..."></textarea>
           <div class="mt-2 flex justify-end">
             <button class="neo-btn neo-btn-pink px-4 py-2 text-xs font-black" data-copy="output-pemakaian">📋 Salin Laporan Pemakaian</button>
           </div>
@@ -516,42 +541,19 @@
 
 </main>
 
-<!-- FLOATING QUICK GENERATE FAB BUTTON -->
-<div class="fab-badge" id="fab-generate" title="Buat Laporan Cepat">
-  🍳
-</div>
+<div class="fab-badge" id="fab-generate" title="Buat Laporan Cepat">🍳</div>
 
 <!-- BOTTOM NAVIGATION BAR -->
 <nav class="bottom-nav" aria-label="Navigasi utama">
-  <button class="nav-btn active" data-tab="dp"><span class="nav-icon">📦</span>DP</button>
-  <button class="nav-btn" data-tab="telur"><span class="nav-icon">🥚</span>Telur</button>
+  <button class="nav-btn active" data-tab="operasional"><span class="nav-icon">⚙️</span>Operasional</button>
   <button class="nav-btn" data-tab="stok"><span class="nav-icon">📋</span>Stok</button>
   <button class="nav-btn" data-tab="pasar"><span class="nav-icon">🥬</span>Pasar</button>
   <button class="nav-btn" data-tab="datang"><span class="nav-icon">🚚</span>Datang</button>
-  <button class="nav-btn" data-tab="pemakaian"><span class="nav-icon">⚙️</span>Ops</button>
+  <button class="nav-btn" data-tab="gramasi"><span class="nav-icon">⚖️</span>Gramasi</button>
   <button class="nav-btn" data-tab="laporan"><span class="nav-icon">📝</span>Laporan</button>
 </nav>
 
-<!-- MODAL FOR PHOTO PREVIEW & CAPTURE DETAILS -->
-<div id="photo-modal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 hidden">
-  <div class="neo-card bg-white p-5 max-w-md w-full space-y-4 relative">
-    <div class="flex justify-between items-center border-b-2 border-[#172923] pb-3">
-      <h3 id="photo-modal-title" class="text-base font-black text-[#172923]">Pratinjau Foto Watermark GPS</h3>
-      <button id="photo-modal-close" class="neo-btn bg-white px-2.5 py-1 text-xs font-black">✕</button>
-    </div>
-
-    <div class="relative bg-black rounded-xl overflow-hidden border-2 border-[#172923] flex items-center justify-center">
-      <img id="photo-modal-img" src="" alt="Pratinjau" class="w-full max-h-[340px] object-contain">
-    </div>
-
-    <div class="flex gap-2 pt-2">
-      <button id="photo-modal-del" class="neo-btn bg-red-100 text-red-600 border-2 border-red-600 flex-1 py-3 text-xs font-black">🗑️ Hapus Foto</button>
-      <button id="photo-modal-ok" class="neo-btn neo-btn-yellow flex-1 py-3 text-xs font-black">Simpan & Tutup</button>
-    </div>
-  </div>
-</div>
-
-<!-- CUSTOM NOTIFICATION / CONFIRM MODAL -->
+<!-- NOTIFICATION MODAL -->
 <div id="custom-modal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 hidden">
   <div class="neo-card bg-white p-6 max-w-sm w-full text-center space-y-4">
     <div id="modal-icon" class="text-4xl">🔥</div>
@@ -576,195 +578,188 @@ function showErr(msg){
 window.addEventListener("error", ev => {
   if(ev && ev.message && ev.message !== "Script error.") showErr(ev.message);
 });
-window.addEventListener("unhandledrejection", ev => {
-  const r = ev && ev.reason;
-  showErr(r && r.message ? r.message : String(r));
-});
 
 /* ---------- DATA ---------- */
 const stokGroups = [
   {title:"Bumbu & stok dapur belakang",items:[["BUMBU AIR","pcs"],["BUMBU GOANG","pcs"],["BUMBU MASTER","pcs"],["BUMBU NASI JERUK","pcs"],["BUMBU DADAR JAGUNG","pcs"],["TEPUNG BERAS","gr"],["TEPUNG CAKRA","gr"],["BERAS SEDAP WANGI 25KG","gr"]]},
-  {title:"Bagian minuman",items:[["CUP 14 POLOS","pcs"],["CUP OVAL 16","pcs"],["CUP OVAL 18 DDR","pcs"],["KNORR LIME","gr"],["SIRUP DELIFRU PANDAN","gr"],["NESTLE CREAMER","gr"],["KOEPOE PASTA 60 ML","gr"],["GULA CAIR BTL","gr"],["SUSU CARNATION 365","gr"],["GARAM EKSPEDISI","gr"]]},
+  {title:"Bagian minuman",items:[["CUP 14 POLOS","pcs"],["CUP OVAL 16","pcs"],["CUP OVAL 18 DDR","pcs"],["KNORR LIME","gr"],["SIRUP DELIFRU PANDAN","gr"],["NESTLE CREAMER","gr"],["KOEPOE PASTA 60 ML","gr"],["GULA CAIR BTL","gr"],["SUSU CARNATION 365","gr"],["GARAM EKSPEDISI","gr"],["SIRUP ABC COCOPANDAN 460ML","gr"],["GULA AREN","gr"]]},
   {title:"Bagian minuman (2)",items:[["TEH CELUP SOSRO","pcs"],["NESTLE MILO 45 GR","pcs"],["NESTEA GREEN TEA","pcs"],["TEH 25 GRAM DSM","pcs"]]},
-  {title:"Penyajian",items:[["DELMONTE EXTRAHOT","pcs"],["KERTAS PANJANG","pcs"],["KOTAK KARDUS DADAR BEREDAR","pcs"],["KRESEK BESAR PUTIH","pcs"],["POLYBAG 120 X 180","pcs"],["KRESEK KECIL UK 15","pcs"],["KRESEK 24","gr"]]},
+  {title:"Penyajian",items:[["DELMONTE EXTRAHOT","pcs"],["KERTAS PANJANG","pcs"],["KOTAK KARDUS DADAR BEREDAR","pcs"],["KRESEK BESAR PUTIH","pcs"],["POLYBAG 120 X 180","pcs"],["KRESEK KECIL UK 15","pcs"],["KRESEK 24","gr"],["PAPER BAG POLOS","pcs"],["PLASTIK SAMBEL","pack"]]},
   {title:"Depan",items:[["KECAP BANGO 1,5 L","gr"],["MAGIC LEZAT 1KG","gr"],["MINYAK SOVIA","gr"],["TELUR PER IKAT 15 KG",""],["SAOS TERIYAKI","gr"],["TEPUNG SYAZA","gr"],["SAUS BARBEQUE","gr"],["NASI MAGIC COM","gr"],["SAMBAL GP","gr"],["SAMBAL MASTER","gr"]]},
   {title:"Kasir",items:[["TEH PUCUK HARUM","pcs"],["LE MINERALE","pcs"],["KERUPUK PULI BERAS","pcs"],["KERUPUK PULI TEPUNG","pcs"],["KERUPUK KEDELAI","pcs"],["KERUPUK UYEL MAWAR","pcs"],["KERUPUK UDANG","pcs"],["KERUPUK RAMBAK","pcs"],["KERUPUK PASIR","pcs"],["KULIT KRISPI","pcs"],["USUS KRISPI","pcs"],["PEYEK KACANG","pcs"],["PEYEK UDANG REBON","pcs"]]}
 ];
 const flatStokList = ["BUMBU AIR","BUMBU GOANG","BUMBU MASTER","CUP 14 POLOS","KERTAS PANJANG","KOTAK KARDUS DADAR BEREDAR","KRESEK BESAR PUTIH","LE MINERALE","MAGIC LEZAT 1KG","MINYAK SOVIA","PLASTIK SAMBEL","PLASTIK SEALER","SEDOTAN RUNCING PREMIUM","TEH PUCUK HARUM","TEPUNG BERAS","TEPUNG SYAZA","TEPUNG CAKRA","THERMAL 58X40","THERMAL 80X80","TISSUE BESAR LIVI","CUP OVAL 16","SEDOTAN BESAR BOBA","TEH CELUP SOSRO","NESTLE MILO 45 GR","SIRUP ABC COCOPANDAN 460ML","KECAP BANGO 1,5 L","GULA CAIR BTL","SUSU CARNATION 365","KRESEK KECIL UK 15","KRESEK 24","TELUR PER IKAT 15 KG","KOEPOE PASTA 60 ML","TEPUNG BERAS SANIA","GULA AREN","DELMONTE EXTRAHOT","BUMBU NASI JERUK","PAPER BAG POLOS","BERAS SEDAP WANGI 25KG","NESTLE CREAMER","NESTEA GREEN TEA","BUMBU DADAR JAGUNG","SIRUP DELIFRU PANDAN","POLYBAG 120 X 180","KNORR LIME","SAOS TERIYAKI","SOLASI 12 MM","TEH 25 GRAM DSM","GARAM EKSPEDISI","CUP OVAL 18 DDR","KERUPUK PULI BERAS","KERUPUK PULI TEPUNG","KERUPUK KEDELAI","KERUPUK UYEL MAWAR","KERUPUK UDANG","KERUPUK RAMBAK","KERUPUK PASIR","KULIT KRISPI","USUS KRISPI","PEYEK KACANG","PEYEK UDANG REBON","SAUS BARBEQUE","NASI MAGIC COM","SAMBAL GP","SAMBAL MASTER"];
-const pasarItems = [
-  ["CABE IJO LALAP","g"],["CABAI MERAH BESAR","g"],["BAWANG PUTIH KUPAS","g"],["BAWANG MERAH KUPAS","g"],["TOMAT MERAH","g"],["JAGUNG MANIS","g"],["DAUN BAWANG","g"],["SELADA AIR","g"],["BAWANG BOMBAY","g"],["DAUN SEREH","g"],["DAUN SALAM","g"],["CENDOL","g"],["JERUK NIPIS","g"],["LAOS MERAH","g"],["DAUN PISANG","g"],["CABE MERAH KECIL","g"],["DAUN JERUK","g"],["SELEDRI","g"],["SEMANGKA","g"],["CINCAU","g"],["MELON","g"],["DAUN PANDAN","g"],["KENCUR","g"],["NANGKA","g"]
-];
+let pasarItems = [["CABE IJO LALAP","g"],["CABAI MERAH BESAR","g"],["BAWANG PUTIH KUPAS","g"],["BAWANG MERAH KUPAS","g"],["TOMAT MERAH","g"],["JAGUNG MANIS","g"],["DAUN BAWANG","g"],["SELADA AIR","g"],["BAWANG BOMBAY","g"],["DAUN SEREH","g"],["DAUN SALAM","g"],["CENDOL","g"],["JERUK NIPIS","g"],["LAOS MERAH","g"],["DAUN PISANG","g"],["CABE MERAH KECIL","g"],["DAUN JERUK","g"],["SELEDRI","g"],["SEMANGKA","g"],["CINCAU","g"],["MELON","g"],["DAUN PANDAN","g"],["KENCUR","g"],["NANGKA","g"]];
+
+// Urutkan pasarItems sesuai Alphabet (A-Z)
+pasarItems.sort((a, b) => a[0].localeCompare(b[0]));
+
 const dpItems = ["Cumi","Ceker","Kulit","A.suwir","Paru"];
+
+// Sesuai format laporan Gramasi yang diminta: A.suwir, Kulit, Cumi, Paru, Ceker
+const osengItems = [
+  { id: 'suwir', name: 'Oseng Ayam Suwir', reportName: 'A.suwir', note: '' },
+  { id: 'kulit', name: 'Oseng Kulit', reportName: 'Kulit', note: '' },
+  { id: 'cumi', name: 'Oseng Cumi', reportName: 'Cumi', note: '' },
+  { id: 'paru', name: 'Oseng Paru', reportName: 'Paru', note: '' },
+  { id: 'ceker', name: 'Oseng Ceker', reportName: 'Ceker', note: '' }
+];
+const sisaItems = [
+  { id: 'suwir', label: 'Ayam suwir' },
+  { id: 'cumi', label: 'Cumi' },
+  { id: 'ceker', label: 'Ceker' },
+  { id: 'kulit', label: 'Kulit' },
+  { id: 'paru', label: 'Paru' }
+];
+
 const itemUnit={}; stokGroups.forEach(g=>g.items.forEach(([n,u])=>itemUnit[n]=u));
 const groupedNames=new Set(stokGroups.flatMap(g=>g.items.map(i=>i[0])));
 const missing=flatStokList.filter(n=>!groupedNames.has(n));
-if(missing.length) stokGroups.push({title:"Item tambahan dari format laporan",items:missing.map(n=>[n,"pcs"])});
+if(missing.length) stokGroups.push({title:"Item tambahan",items:missing.map(n=>[n,"pcs"])});
 
-/* ---------- STATE & PENYIMPANAN ---------- */
-const storageKey="gudang-harian-neo-v7";
-const legacyKey="gudang-harian-neo-v6";
-let photosState={};
-let activePhotoKey=null;
-let photoStoreOK=false;
-let photoPersistOK=true;
+/* ---------- STATE & STORAGE ---------- */
+const storageKey="gudang-harian-neo-v11";
 let lastSaveOK=true;
 
 const Store=(()=>{
   let ls=null;
-  try{ ls=window.localStorage; const k="__gh_test__"; ls.setItem(k,"1"); ls.removeItem(k); }catch(e){ ls=null; }
+  try{ ls=window.localStorage; const k="_t"; ls.setItem(k,"1"); ls.removeItem(k); }catch(e){ ls=null; }
   const mem={};
   return {
     persistent:!!ls,
-    get(k){
-      try{ if(ls) return ls.getItem(k); }catch(e){}
-      return Object.prototype.hasOwnProperty.call(mem,k)?mem[k]:null;
-    },
-    set(k,v){
-      mem[k]=v;
-      if(!ls) return false;
-      try{ ls.setItem(k,v); return true; }catch(e){ return false; }
-    }
+    get(k){try{if(ls)return ls.getItem(k);}catch(e){}return Object.prototype.hasOwnProperty.call(mem,k)?mem[k]:null;},
+    set(k,v){mem[k]=v;if(!ls)return false;try{ls.setItem(k,v);return true;}catch(e){return false;}}
   };
 })();
 
-const PhotoDB=(()=>{
-  let db=null;
-  function open(){
-    return new Promise(resolve=>{
-      let settled=false;
-      const done=ok=>{ if(!settled){ settled=true; resolve(ok); } };
-      const timer=setTimeout(()=>done(false),2500);
-      try{
-        if(!window.indexedDB){ clearTimeout(timer); return done(false); }
-        const req=indexedDB.open("gudang-harian-photos",1);
-        req.onupgradeneeded=()=>{ try{ req.result.createObjectStore("photos"); }catch(e){} };
-        req.onsuccess=()=>{ db=req.result; clearTimeout(timer); done(true); };
-        req.onerror=()=>{ clearTimeout(timer); done(false); };
-        req.onblocked=()=>{ clearTimeout(timer); done(false); };
-      }catch(e){ clearTimeout(timer); done(false); }
-    });
-  }
-  function run(mode,fn){
-    return new Promise(resolve=>{
-      if(!db) return resolve(false);
-      try{
-        const t=db.transaction("photos",mode);
-        fn(t.objectStore("photos"));
-        t.oncomplete=()=>resolve(true);
-        t.onerror=()=>resolve(false);
-        t.onabort=()=>resolve(false);
-      }catch(e){ resolve(false); }
-    });
-  }
-  function getAll(){
-    return new Promise(resolve=>{
-      if(!db) return resolve({});
-      const out={};
-      try{
-        const t=db.transaction("photos","readonly");
-        const req=t.objectStore("photos").openCursor();
-        req.onsuccess=()=>{ const c=req.result; if(c){ out[c.key]=c.value; c.continue(); } };
-        t.oncomplete=()=>resolve(out);
-        t.onerror=()=>resolve(out);
-        t.onabort=()=>resolve(out);
-      }catch(e){ resolve(out); }
-    });
-  }
-  return {
-    open,
-    getAll,
-    put:(k,v)=>run("readwrite",s=>s.put(v,k)),
-    del:k=>run("readwrite",s=>s.delete(k)),
-    clear:()=>run("readwrite",s=>s.clear())
-  };
-})();
-
-function isSavable(el){
-  return !!el && !el.readOnly && el.type!=="file" && !["search-stok","search-pasar","search-datang"].includes(el.id);
-}
+function isSavable(el){ return !!el && !el.readOnly && el.type!=="file" && !el.id.startsWith("search-"); }
 
 function setStatus(){
-  const el=$("save-status");
-  if(!el) return;
-  const hasPhotos=Object.keys(photosState).length>0;
-  if(!Store.persistent) el.textContent="⚠️ Browser memblokir penyimpanan — data hanya di memori";
+  const el=$("save-status"); if(!el) return;
+  if(!Store.persistent) el.textContent="⚠️ Data hanya di memori";
   else if(!lastSaveOK) el.textContent="⚠️ Penyimpanan browser penuh";
-  else if(hasPhotos && !(photoStoreOK && photoPersistOK)) el.textContent="⚠️ Foto belum bisa disimpan permanen";
   else el.textContent="💾 Tersimpan otomatis";
 }
 
 function saveState(){
   const data={};
   document.querySelectorAll("input[id],textarea[id],select[id]").forEach(el=>{
-    if(isSavable(el) && !["global-shift","global-pos"].includes(el.id)) data[el.id]=el.value;
+    // Kecualikan input gramasi dinamis karena akan ditangani terpisah via array _gramasi
+    if(isSavable(el) && !["global-shift","global-pos"].includes(el.id) && !el.classList.contains("gram-input") && !el.classList.contains("pkt-input")) {
+      data[el.id]=el.value;
+    }
   });
   data._shift=$("global-shift").value;
   data._pos=$("global-pos").value;
+  
+  // Save Gramasi array
+  const gramasiData = {};
+  osengItems.forEach(item => {
+    const arr = [];
+    const container = $(`rows-${item.id}`);
+    if(container) {
+      const rows = container.querySelectorAll('.gramasi-row');
+      rows.forEach(row => {
+        arr.push({
+          gr: row.querySelector('.gram-input').value,
+          pkt: row.querySelector('.pkt-input').value
+        });
+      });
+    }
+    gramasiData[item.id] = arr;
+  });
+  data._gramasi = gramasiData;
+
   lastSaveOK=Store.set(storageKey,JSON.stringify(data));
-  setStatus();
-  updateSummary();
+  setStatus(); updateSummary();
 }
 
 function restoreState(){
-  let raw=Store.get(storageKey), legacy=false;
-  if(!raw){ raw=Store.get(legacyKey); legacy=!!raw; }
-  let data={};
-  try{ data=JSON.parse(raw||"{}")||{}; }catch(e){ data={}; }
-
-  const setVal=(id,v)=>{
-    try{
-      const el=$(id);
-      if(isSavable(el) && typeof v==="string") el.value=v;
-    }catch(e){}
-  };
+  let raw=Store.get(storageKey), data={};
+  try{ data=JSON.parse(raw||"{}")||{}; }catch(e){}
+  
+  const setVal=(id,v)=>{try{const el=$(id);if(isSavable(el) && typeof v==="string")el.value=v;}catch(e){}};
   if(data._shift) setVal("global-shift",data._shift);
   if(data._pos) setVal("global-pos",data._pos);
   Object.keys(data).forEach(id=>{ if(id.charAt(0)!=="_") setVal(id,data[id]); });
-
+  
+  // Restore Gramasi Dynamic rows
+  if(data._gramasi) {
+    osengItems.forEach(item => {
+      const arr = data._gramasi[item.id] || [];
+      const container = $(`rows-${item.id}`);
+      if(container) {
+        container.innerHTML = ""; // Hapus default
+        if(arr.length === 0) {
+          addGramasiRow(item.id);
+        } else {
+          arr.forEach(r => addGramasiRow(item.id, r.gr, r.pkt));
+        }
+      }
+    });
+  }
+  
   if(!$("global-date").value) $("global-date").value=todayISO();
-
-  return (legacy && data._photos && typeof data._photos==="object") ? data._photos : null;
 }
 
 let confirmCb=null;
-function closeModal(){
-  $("custom-modal").classList.add("hidden");
-}
+function closeModal(){ $("custom-modal").classList.add("hidden"); }
 function showModal(title,msg,icon="🔥"){
-  confirmCb=null;
-  $("modal-title").textContent=title;
-  $("modal-message").textContent=msg;
-  $("modal-icon").textContent=icon;
-  $("modal-cancel").classList.add("hidden");
-  $("modal-close").textContent="OK, Mengerti";
-  $("custom-modal").classList.remove("hidden");
+  confirmCb=null; $("modal-title").textContent=title; $("modal-message").textContent=msg; $("modal-icon").textContent=icon;
+  $("modal-cancel").classList.add("hidden"); $("modal-close").textContent="OK, Mengerti"; $("custom-modal").classList.remove("hidden");
 }
 function askConfirm(title,msg,icon,onYes){
-  showModal(title,msg,icon);
-  confirmCb=onYes;
-  $("modal-cancel").classList.remove("hidden");
-  $("modal-close").textContent="Ya, lanjut";
+  showModal(title,msg,icon); confirmCb=onYes;
+  $("modal-cancel").classList.remove("hidden"); $("modal-close").textContent="Ya, lanjut";
 }
 
-function todayISO(){
-  const d=new Date();
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
-}
+function todayISO(){ const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; }
 function getSelectedDate(){
   const v=$("global-date")?$("global-date").value:"";
   const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(v);
-  if(!m) return new Date();
-  return new Date(Number(m[1]),Number(m[2])-1,Number(m[3]));
+  if(!m) return new Date(); return new Date(Number(m[1]),Number(m[2])-1,Number(m[3]));
+}
+function slug(s){return s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}
+function val(id){const el=$(id);return el && el.value.trim()!==""?el.value.trim():""}
+
+/* ---------- DYNAMIC GRAMASI BUILDER ---------- */
+function addGramasiRow(itemId, grVal = '', pktVal = '') {
+  const container = $(`rows-${itemId}`);
+  if(!container) return;
+  const div = document.createElement('div');
+  div.className = "flex gap-2 items-center mb-2.5 gramasi-row";
+  div.innerHTML = `
+    <input type="number" step="any" class="gram-input w-full text-center" placeholder="Gram (g)" value="${grVal}">
+    <span class="text-xs font-black text-[#172923]">➡️</span>
+    <input type="text" step="any" class="pkt-input w-full text-center" placeholder="Paket (pkt)" value="${pktVal}">
+    <button type="button" class="neo-btn bg-red-100 text-red-600 px-3 py-2 text-[10px] border-red-600" onclick="this.parentElement.remove(); saveState();" title="Hapus Baris">✕</button>
+  `;
+  container.appendChild(div);
 }
 
-/* ---------- RENDER ---------- */
+/* ---------- RENDER UI ---------- */
 function renderDynamicInputs(){
   $("dp-inputs").innerHTML=dpItems.map(item=>`
     <div class="flex items-center justify-between gap-3 bg-[#fcf8f2] p-3 rounded-xl border-2 border-[#172923] shadow-[2px_2px_0px_#172923]">
       <label for="dp-${item}" class="text-xs font-black uppercase text-[#172923] flex-1">${item}</label>
-      <input id="dp-${item}" type="number" min="0" placeholder="0" inputmode="decimal" class="w-32 text-center">
+      <input id="dp-${item}" type="text" min="0" placeholder="0" inputmode="decimal" class="w-32 text-center">
     </div>
   `).join("");
+
+  $("gramasi-container").innerHTML = osengItems.map(item => `
+    <div class="bg-[#fcf8f2] border-2 border-[#172923] p-4 rounded-xl shadow-[2px_2px_0px_#172923]">
+      <div class="flex justify-between items-center mb-3">
+        <div class="text-xs font-black uppercase text-[#172923] bg-[#ffd43b] px-2.5 py-1 rounded-md border border-[#172923] inline-block">
+          ${item.name} ${item.note ? `<span class="opacity-75 lowercase ml-1">(${item.note})</span>` : ''}
+        </div>
+        <button type="button" onclick="addGramasiRow('${item.id}'); saveState();" class="neo-btn bg-white px-3 py-1.5 text-[10px] font-black border-[#172923]">+ Tambah</button>
+      </div>
+      <div id="rows-${item.id}" class="space-y-1"></div>
+    </div>
+  `).join("");
+  
+  // Set default initial 1 row for each oseng item
+  osengItems.forEach(item => addGramasiRow(item.id));
 
   $("stok-groups-container").innerHTML=stokGroups.map((g,idx)=>`
     <div class="bg-[#fcf8f2] border-2 border-[#172923] p-4 rounded-xl shadow-[3px_3px_0px_#172923] space-y-3" data-stock-group="${idx}">
@@ -775,10 +770,6 @@ function renderDynamicInputs(){
             <label for="input-stok-${name}" class="text-xs font-extrabold text-[#172923] flex-1 leading-snug">${name}${unit?` <span class="text-[10px] font-bold text-[#5e6d67]">(${unit})</span>`:""}</label>
             <div class="flex items-center gap-2">
               <input id="input-stok-${name}" type="number" min="0" step="any" placeholder="—" inputmode="decimal" class="w-24 text-center">
-              <button type="button" class="neo-btn bg-white px-2.5 py-2 text-xs font-black camera-btn" data-key="stok_${name}" title="Ambil Foto Watermark GPS">
-                📷 <span id="badge-stok_${name}" class="hidden bg-red-500 text-white rounded-full px-1.5 text-[9px]">✓</span>
-              </button>
-              <input type="file" accept="image/*" capture="environment" class="hidden file-input" id="file-stok_${name}" data-key="stok_${name}">
             </div>
           </div>
         `).join("")}
@@ -791,10 +782,6 @@ function renderDynamicInputs(){
       <label for="pasar-${slug(name)}" class="text-xs font-extrabold text-[#172923] flex-1">${name} <span class="text-[10px] font-bold text-[#5e6d67]">(${unit})</span></label>
       <div class="flex items-center gap-2">
         <input id="pasar-${slug(name)}" type="number" min="0" step="any" placeholder="—" inputmode="decimal" class="w-24 text-center">
-        <button type="button" class="neo-btn bg-white px-2.5 py-2 text-xs font-black camera-btn" data-key="pasar_${name}" title="Ambil Foto Watermark GPS">
-          📷 <span id="badge-pasar_${name}" class="hidden bg-red-500 text-white rounded-full px-1.5 text-[9px]">✓</span>
-        </button>
-        <input type="file" accept="image/*" capture="environment" class="hidden file-input" id="file-pasar_${name}" data-key="pasar_${name}">
       </div>
     </div>
   `).join("");
@@ -804,58 +791,15 @@ function renderDynamicInputs(){
       <label for="datang-${slug(name)}" class="text-xs font-extrabold text-[#172923] flex-1">${name} <span class="text-[10px] font-bold text-[#5e6d67]">(${unit})</span></label>
       <div class="flex items-center gap-2">
         <input id="datang-${slug(name)}" type="number" min="0" step="any" placeholder="—" inputmode="decimal" class="w-24 text-center">
-        <button type="button" class="neo-btn bg-white px-2.5 py-2 text-xs font-black camera-btn" data-key="datang_${name}" title="Ambil Foto Watermark GPS">
-          📷 <span id="badge-datang_${name}" class="hidden bg-red-500 text-white rounded-full px-1.5 text-[9px]">✓</span>
-        </button>
-        <input type="file" accept="image/*" capture="environment" class="hidden file-input" id="file-datang_${name}" data-key="datang_${name}">
       </div>
     </div>
   `).join("");
 }
 
-function slug(s){return s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")}
-function val(id){const el=$(id);return el && el.value.trim()!==""?el.value.trim():""}
-
-function reportVal(id,unit=""){
-  const v=val(id);
-  if(v==="")return "-";
-  const n=Number(v);
-  if(!Number.isFinite(n))return v;
-  if(unit==="g"||unit==="gr"){
-    if(n>=1000){
-      const kgVal = n / 1000;
-      return `${kgVal.toString().replace('.', ',')} kg`;
-    }
-    return `${n.toString().replace('.', ',')} g`;
-  }
-  if(unit==="kg"){
-    return `${n.toString().replace('.', ',')} kg`;
-  }
-  return `${n.toString().replace('.', ',')}`;
-}
-
 function updateSummary(){
-  const count=flatStokList.filter(n=>val(`input-stok-${n}`)!=="").length;
-  $("sum-stok").textContent=count;
-  const pcount=pasarItems.filter(([n])=>val(`pasar-${slug(n)}`)!=="").length;
-  $("sum-pasar").textContent=`${pcount}/${pasarItems.length}`;
-  const dcount=pasarItems.filter(([n])=>val(`datang-${slug(n)}`)!=="").length;
-  $("sum-datang").textContent=`${dcount}/${pasarItems.length}`;
-  $("sum-foto").textContent=Object.keys(photosState).length;
-}
-
-function updatePhotoIndicators(){
-  document.querySelectorAll(".camera-btn").forEach(btn=>{
-    const key = btn.dataset.key;
-    const badge = $(`badge-${key}`);
-    if(photosState[key]) {
-      btn.classList.add("bg-[#b2f2bb]", "border-[#172923]");
-      if(badge) badge.classList.remove("hidden");
-    } else {
-      btn.classList.remove("bg-[#b2f2bb]");
-      if(badge) badge.classList.add("hidden");
-    }
-  });
+  $("sum-stok").textContent=flatStokList.filter(n=>val(`input-stok-${n}`)!=="").length;
+  $("sum-pasar").textContent=`${pasarItems.filter(([n])=>val(`pasar-${slug(n)}`)!=="").length}/${pasarItems.length}`;
+  $("sum-datang").textContent=`${pasarItems.filter(([n])=>val(`datang-${slug(n)}`)!=="").length}/${pasarItems.length}`;
 }
 
 function switchTab(id){
@@ -867,360 +811,162 @@ function switchTab(id){
   try{ window.scrollTo({top:0,behavior:"smooth"}); }catch(e){}
 }
 
+/* ---------- GENERATE REPORTS ---------- */
 function generateReports(){
-  const sel=getSelectedDate(),months=["JANUARI","FEBRUARI","MARET","APRIL","MEI","JUNI","JULI","AGUSTUS","SEPTEMBER","OKTOBER","NOVEMBER","DESEMBER"],tgl=`${sel.getDate()}-${sel.getMonth()+1}-${sel.getFullYear()}`,shift=$("global-shift").value,pos=$("global-pos").value;
+  const sel=getSelectedDate(), shift=$("global-shift").value, pos=$("global-pos").value;
+  const tglStr=`${String(sel.getDate()).padStart(2,'0')}-${String(sel.getMonth()+1).padStart(2,'0')}-${sel.getFullYear()}`;
+  const namaBulanIndo = ["JANUARI","FEBRUARI","MARET","APRIL","MEI","JUNI","JULI","AGUSTUS","SEPTEMBER","OKTOBER","NOVEMBER","DESEMBER"];
+  const tglFull = `${sel.getDate()} ${namaBulanIndo[sel.getMonth()]} ${sel.getFullYear()}`;
 
-  let stok=`SISA STOCK CLOSING SETIAP SHIFT ${months[sel.getMonth()]} ${tgl} SHIFT ${shift}*\n`;
-  flatStokList.forEach(name=>{
-    const unit=itemUnit[name]||"pcs";
-    stok+=`${name} : ${reportVal(`input-stok-${name}`,unit==="gr"?"gr":unit)}\n`;
+  // 1. GRAMASI
+  // Format target:
+  // *GRAMASI OSENGAN SHIFT SORE*
+  // Tanggal : 24-10-2026
+  // A.suwir : 
+  // - 100 g ➡️ 2 pkt
+  // Total : 100 g ➡️ 2 pkt
+  
+  let gramasi = `*GRAMASI OSENGAN SHIFT ${shift.toUpperCase()}*\nTanggal : ${tglStr}\n`;
+  osengItems.forEach(item => {
+    let itemLines = "";
+    let totalPkt = 0, totalGr = 0;
+    const container = $(`rows-${item.id}`);
+    if(container) {
+      const rows = container.querySelectorAll('.gramasi-row');
+      rows.forEach(row => {
+        const gr = row.querySelector('.gram-input').value.trim();
+        const pkt = row.querySelector('.pkt-input').value.trim();
+        
+        if(pkt && gr) {
+          let pktNum = parseFloat(pkt.replace(',', '.'));
+          let grNum = parseFloat(gr.replace(',', '.'));
+          if(!isNaN(pktNum) && !isNaN(grNum)){
+            itemLines += `- ${grNum} g ➡️ ${pktNum} pkt\n`;
+            totalPkt += pktNum;
+            totalGr += grNum;
+          }
+        }
+      });
+    }
+    
+    gramasi += `${item.reportName} :\n`;
+    if(itemLines) gramasi += itemLines;
+    gramasi += `Total : ${totalGr} g ➡️ ${totalPkt} pkt\n`;
+  });
+  $("output-gramasi").value = gramasi.trim();
+
+  // 2. SISA DP
+  let sdp = `*List sisa bahan DP DB Bandung Ujung berung ${tglFull}*\n\n*Sisa osengan*\n`;
+  sisaItems.forEach(i => sdp += `${i.label} : ${val(`sisa-oseng-${i.id}`) || ""} gr\n`);
+  sdp += `\n*Sisa bahan DP yg sudah di buka*\n`;
+  sisaItems.forEach(i => sdp += `${i.label} : ${val(`sisa-dpbuka-${i.id}`) || ""} gr\n`);
+  $("output-sisadp").value = sdp.trim();
+
+  // 3. STOK CLOSING
+  let stok=`*SISA STOCK CLOSING SETIAP SHIFT ${namaBulanIndo[sel.getMonth()]} ${tglStr.split('-')[0]} SHIFT ${shift}*\n`;
+  flatStokList.forEach(n=>{
+    let v=val(`input-stok-${n}`), u=itemUnit[n]||"pcs";
+    if(v!==""){
+      let num=Number(v);
+      if((u==="g"||u==="gr") && num>=1000) v=`${(num/1000).toString().replace('.',',')} kg`;
+      else v=`${num.toString().replace('.',',')} ${u==="gr"?"gr":u}`;
+    } else v="-";
+    stok+=`${n} : ${v}\n`;
   });
   $("output-stok").value=stok.trim();
 
-  let pasar=`SISA STOK ${pos}\n\n`;
-  pasarItems.forEach(([name,unit])=>{
-    pasar+=`${name} : ${reportVal(`pasar-${slug(name)}`,unit)}\n`;
+  // 4 & 5. PASAR & DATANG
+  let pasar=`*SISA BAHAN PASAR SHIFT ${shift}*\n\n`;
+  pasarItems.forEach(([n,u])=>{
+    let v=val(`pasar-${slug(n)}`);
+    if(v!=="") v=`${v} ${u}`; else v="-";
+    pasar+=`${n} : ${v}\n`;
   });
   $("output-pasar").value=pasar.trim();
 
-  let datang=` ${pos}\n`;
-  let hasDatang = false;
-  pasarItems.forEach(([name,unit])=>{
-    const v = val(`datang-${slug(name)}`);
-    if(v !== "") {
-      hasDatang = true;
-      datang+=`${name} : ${reportVal(`datang-${slug(name)}`,unit)}\n`;
-    }
+  let datang=` ${pos}\n`; let hd=false;
+  pasarItems.forEach(([n,u])=>{
+    let v = val(`datang-${slug(n)}`);
+    if(v!=="") { hd=true; datang+=`${n} : ${v} ${u}\n`; }
   });
-  if(!hasDatang) {
-    datang+=`- Tidak ada bahan datang -\n`;
-  }
+  if(!hd) datang+=`- Tidak ada bahan datang -\n`;
   $("output-datang").value=datang.trim();
 
-  let pakai=`*PEMAKAIAN DP, TELUR DAN GUDANG SHIFT ${shift} TGL ${tgl}*\n\n*PEMAKAIAN DP*\n`;
-  dpItems.forEach(item=>pakai+=`${item} : ${val(`dp-${item}`)||"-"}\n`);
-  pakai+=`\n*PENGAMBILAN TELUR*\n${val("val-pengambilan-telur")||"-"} butir\n\n*PEMAKAIAN TELUR DADAR*\n${val("val-pemakaian-telur-dadar")||"-"} batch\n\n*SISA TELUR*\n${val("val-sisa-telur")||"-"} butir\n\n*PEMAKAIAN DAPUR BELAKANG*\nShift : ${shift.toLowerCase()} \nTgl : ${tgl}\n\n*CEKER CRISPY*\nPemakaian : ${val("cc-pakai")||"-"} porsi\nProses : ${val("cc-proses")||"-"}\nSisa : ${val("cc-sisa")||"-"}\n\n*DAPUR DEPAN*\n\n*DADAR JAGUNG*\n${val("dd-batch")||"-"} batch\n\n*CEPLOK*\n${val("ceplok-val")||"-"}\n\n*GUDANG*\n${val("gudang-pemakaian-lain")||"-"}`;
+  // 6. PEMAKAIAN OPERASIONAL (Gabungan)
+  let pakai=`*PEMAKAIAN DP, TELUR DAN GUDANG SHIFT ${shift} TGL ${tglStr}*\n\n*PEMAKAIAN DP*\n`;
+  dpItems.forEach(i=>pakai+=`${i} : ${val(`dp-${i}`)||"-"}\n`);
+  
+  pakai+=`\n*PENGAMBILAN TELUR*\n${val("val-pengambilan-telur")||"-"} butir\n\n*PEMAKAIAN TELUR DADAR*\n${val("val-pemakaian-telur-dadar")||"-"} batch\n\n*SISA TELUR*\n${val("val-sisa-telur")||"-"} butir\n\n`;
+  
+  pakai+=`\n*CEKER CRISPY*\nShift : ${shift.toLowerCase()} \nTgl : ${tglStr}\n\nPemakaian : ${val("cc-pakai")||"-"} porsi\nProses : ${val("cc-proses")||"-"}\nSisa : ${val("cc-sisa")||"-"}\n\n*DAPUR BELAKANG*\n${val("dapur-belakang-lain")||"-"}\n\n`;
+  
+  pakai+=`*DAPUR DEPAN*\n\n*DADAR JAGUNG*\n${val("dd-batch")||"-"} batch\n\n*CEPLOK*\n${val("ceplok-val")||"-"}\n\n*GUDANG*\n${val("gudang-pemakaian-lain")||"-"}`;
+  
+  $("output-pemakaian").value=pakai.trim();
 
-  $("output-pemakaian").value=pakai;
-  saveState();
-  switchTab("laporan");
+  saveState(); switchTab("laporan");
   showModal("Berhasil!", "Semua laporan operasional berhasil dibuat dan diperbarui.", "🔥");
 }
 
+/* ---------- ACTIONS ---------- */
 async function copyText(id){
-  const text=$(id).value;
-  if(!text){
-    showModal("Perhatian", "Silakan buat laporan terlebih dahulu dengan menekan tombol Buat Laporan.", "⚠️");
-    return;
-  }
-  let ok=false;
-  try{
-    await navigator.clipboard.writeText(text);
-    ok=true;
-  }catch(e){
-    try{
-      $(id).select();
-      ok=document.execCommand("copy");
-    }catch(e2){}
-  }
-  if(ok) showModal("Berhasil Disalin!", "Laporan siap ditempel (paste) ke WhatsApp.", "📋");
-  else showModal("Gagal Menyalin", "Browser memblokir salin otomatis. Tekan lama pada kotak laporan lalu pilih Salin.", "⚠️");
+  const txt=$(id).value;
+  if(!txt){ showModal("Perhatian", "Silakan buat laporan terlebih dahulu.", "⚠️"); return; }
+  try{ await navigator.clipboard.writeText(txt); showModal("Tersalin!", "Siap di-paste ke WhatsApp.", "📋"); }
+  catch(e){ $(id).select(); document.execCommand("copy"); showModal("Tersalin!", "Siap di-paste.", "📋"); }
 }
 
-function resetShift(){
-  askConfirm("Kosongkan Shift?","Semua input dan foto shift ini akan dihapus. Tanggal tidak ikut dihapus.","🗑️",doReset);
-}
 async function doReset(){
-  document.querySelectorAll("input[id],textarea[id]").forEach(el=>{
-    if(isSavable(el) && el.id!=="global-date") el.value="";
-  });
-  document.querySelectorAll(".file-input").forEach(el=>{ try{ el.value=""; }catch(e){} });
-  photosState={};
-  photoPersistOK=true;
-  if(photoStoreOK) await PhotoDB.clear();
-  $("output-stok").value="";
-  $("output-pasar").value="";
-  $("output-datang").value="";
-  $("output-pemakaian").value="";
-  saveState();
-  updatePhotoIndicators();
-  switchTab("dp");
-}
-
-function filterRows(inputId,rowSelector){
-  const q=$(inputId).value.toLowerCase().trim();
-  document.querySelectorAll(rowSelector).forEach(row=>{
-    row.style.display=row.dataset.name.includes(q)?"flex":"none";
-  });
-  if(inputId==="search-stok"){
-    document.querySelectorAll("[data-stock-group]").forEach(group=>{
-      const rows=[...group.querySelectorAll(".stock-row")];
-      group.style.display=rows.some(r=>r.style.display!=="none")?"block":"none";
-    });
-  }
-}
-
-/* ---------- FOTO + WATERMARK GPS ---------- */
-const MAX_SIDE=1600, JPEG_Q=0.82;
-const DEFAULT_L2="Arcamanik,Kecamatan Arcamanik";
-const DEFAULT_L3="Kota Bandung\nJawa Barat";
-
-function processImageWithGPSWatermark(file, callback){
-  const objUrl=URL.createObjectURL(file);
-  const img=new Image();
-  img.onload=function(){
-    URL.revokeObjectURL(objUrl);
-    let w=img.naturalWidth||img.width, h=img.naturalHeight||img.height;
-    const ratio=Math.min(1, MAX_SIDE/Math.max(w,h));
-    w=Math.round(w*ratio); h=Math.round(h*ratio);
-
-    const canvas=document.createElement("canvas");
-    canvas.width=w; canvas.height=h;
-    const ctx=canvas.getContext("2d");
-    ctx.drawImage(img,0,0,w,h);
-
-    let finished=false;
-    const finish=(l2,l3)=>{
-      if(finished) return;
-      finished=true;
-      drawWatermark(canvas,ctx,l2,l3);
-      callback(canvas.toDataURL("image/jpeg",JPEG_Q));
-    };
-    const hardTimer=setTimeout(()=>finish(DEFAULT_L2,DEFAULT_L3),18000);
-
-    if(navigator.geolocation){
-      navigator.geolocation.getCurrentPosition(
-        async (pos)=>{
-          let l2=DEFAULT_L2, l3=DEFAULT_L3;
-          try{
-            const ctrl=new AbortController();
-            const t=setTimeout(()=>ctrl.abort(),5000);
-            const res=await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`,{signal:ctrl.signal});
-            clearTimeout(t);
-            const data=await res.json();
-            if(data && data.address){
-              const sub = data.address.village || data.address.suburb || data.address.neighbourhood || "Arcamanik";
-              const dist = data.address.city_district || data.address.town || data.address.county || "Kecamatan Arcamanik";
-              const city = data.address.city || data.address.state || "Kota Bandung";
-              const state = data.address.state || "Jawa Barat";
-              l2 = `${sub}, ${dist}`;
-              l3 = `${city}\n${state}`;
-            }
-          }catch(err){
-            console.log("Nominatim reverse geocode fallback used");
-          }
-          clearTimeout(hardTimer);
-          finish(l2,l3);
-        },
-        ()=>{ clearTimeout(hardTimer); finish(DEFAULT_L2,DEFAULT_L3); },
-        { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
-      );
-    } else {
-      clearTimeout(hardTimer);
-      finish(DEFAULT_L2,DEFAULT_L3);
-    }
-  };
-  img.onerror=function(){
-    URL.revokeObjectURL(objUrl);
-    callback(null);
-  };
-  img.src=objUrl;
-}
-
-function drawWatermark(canvas, ctx, line2Text, line3Text) {
-  const now = new Date();
-  const day = String(now.getDate()).padStart(2, '0');
-  const monthsShort = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agt","Sep","Okt","Nov","Des"];
-  const year = now.getFullYear();
-  const hours = String(now.getHours()).padStart(2, '0');
-  const mins = String(now.getMinutes()).padStart(2, '0');
-  const secs = String(now.getSeconds()).padStart(2, '0');
-  const timeStr = `${day} ${monthsShort[now.getMonth()]} ${year} ${hours}.${mins}.${secs}`;
-
-  const scale = canvas.width / 800;
-  const fontSize = Math.max(28, Math.floor(scale * 36));
-
-  ctx.textAlign = "right";
-  const rightMargin = canvas.width - Math.max(30, canvas.width * 0.04);
-  let startY = canvas.height - Math.max(140, canvas.height * 0.18);
-
-  ctx.font = `bold ${fontSize}px sans-serif`;
-  ctx.fillStyle = "#ffffff";
-  ctx.shadowColor = "rgba(0, 0, 0, 0.2)";
-  ctx.shadowBlur = 2;
-  ctx.lineWidth = 4;
-
-  ctx.strokeText(timeStr, rightMargin, startY);
-  ctx.fillText(timeStr, rightMargin, startY);
-
-  startY += fontSize * 1.25;
-  ctx.strokeText(line2Text, rightMargin, startY);
-  ctx.fillText(line2Text, rightMargin, startY);
-
-  const lines = line3Text.split("\n");
-  lines.forEach(l => {
-    startY += fontSize * 1.25;
-    ctx.strokeText(l, rightMargin, startY);
-    ctx.fillText(l, rightMargin, startY);
-  });
-}
-
-async function downloadAllPhotosAsZip() {
-  const keys = Object.keys(photosState);
-  if(keys.length === 0) {
-    showModal("Belum Ada Foto", "Belum ada foto item yang diambil atau disimpan pada shift ini.", "⚠️");
-    return;
-  }
-
-  if (typeof JSZip === 'undefined') {
-    showModal("Error", "Library JSZip belum termuat.", "❌");
-    return;
-  }
-
-  showModal("Menyiapkan ZIP...", "Sedang mengemas semua foto ber-watermark GPS...", "⏳");
-
-  const dateStr = $("global-date").value || todayISO();
-  const zip = new JSZip();
-  const folder = zip.folder("gudang_photos_" + dateStr);
-
-  keys.forEach(key => {
-    const dataUrl = photosState[key];
-    const base64Data = dataUrl.replace(/^data:image\/jpeg;base64,/, "");
-    folder.file(`${key}.jpg`, base64Data, {base64: true});
+  document.querySelectorAll("input[id],textarea[id]").forEach(el=>{ if(isSavable(el) && el.id!=="global-date") el.value=""; });
+  
+  // Reset baris gramasi ke 1 baris kosong per osengan
+  osengItems.forEach(item => {
+    const container = $(`rows-${item.id}`);
+    if(container) { container.innerHTML = ""; addGramasiRow(item.id); }
   });
 
-  try {
-    const content = await zip.generateAsync({type:"blob"});
-    const url = URL.createObjectURL(content);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `Gudang_Photos_${$("global-shift").value}_${dateStr}.zip`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    showModal("Berhasil Diunduh!", "File ZIP berisi semua foto berhasil diunduh ke perangkat Anda.", "📦");
-  } catch(err) {
-    showModal("Gagal", "Terjadi kesalahan saat membuat file ZIP.", "❌");
-  }
+  ["output-stok","output-pasar","output-datang","output-pemakaian","output-gramasi","output-sisadp"].forEach(id=>$(id).value="");
+  saveState(); switchTab("operasional");
 }
 
-/* ---------- EVENT LISTENERS ---------- */
-document.querySelectorAll(".nav-btn").forEach(btn=>btn.addEventListener("click",()=>switchTab(btn.dataset.tab)));
-
-document.addEventListener("input",e=>{
-  if(e.target.matches("input[id],textarea[id],select[id]") && isSavable(e.target)){
-    saveState();
-  }
-});
-
-document.addEventListener("click", e => {
-  const btn = e.target.closest(".camera-btn");
-  if(btn){
-    const key = btn.dataset.key;
-    if(photosState[key]){
-      activePhotoKey = key;
-      $("photo-modal-title").textContent = `Foto GPS: ${key.replace(/^(stok_|pasar_|datang_)/, '')}`;
-      $("photo-modal-img").src = photosState[key];
-      $("photo-modal").classList.remove("hidden");
-    } else {
-      const fi=$(`file-${key}`);
-      if(fi) fi.click();
-    }
-  }
-});
-
-document.addEventListener("change", e => {
-  if(e.target.matches(".file-input")){
-    const fileInput = e.target;
-    const key = fileInput.dataset.key;
-    const file = fileInput.files && fileInput.files[0];
-    if(file){
-      showModal("Memproses GPS...", "Mengambil koordinat lokasi akurat & menambahkan cap waktu pada foto...", "⏳");
-      processImageWithGPSWatermark(file, async (watermarkedDataUrl) => {
-        try{ fileInput.value=""; }catch(err){}
-        if(!watermarkedDataUrl){
-          showModal("Gagal", "Foto tidak bisa dibaca. Coba ambil ulang.", "❌");
-          return;
-        }
-        photosState[key] = watermarkedDataUrl;
-        if(photoStoreOK) photoPersistOK = await PhotoDB.put(key, watermarkedDataUrl);
-        saveState();
-        updatePhotoIndicators();
-        showModal("Foto GPS Disimpan", "Foto dengan cap waktu dan lokasi berhasil disimpan otomatis.", "📸");
-      });
-    }
-  }
-});
-
-$("modal-close").addEventListener("click", () => {
-  const cb=confirmCb;
-  confirmCb=null;
-  closeModal();
-  if(cb) cb();
-});
+/* ---------- INIT & LISTENERS ---------- */
+document.querySelectorAll(".nav-btn").forEach(b=>b.addEventListener("click",()=>switchTab(b.dataset.tab)));
+document.addEventListener("input",e=>{ if(e.target.matches("input[id],textarea[id],select[id]") || e.target.classList.contains("gram-input") || e.target.classList.contains("pkt-input")) saveState(); });
+$("modal-close").addEventListener("click", () => { const cb=confirmCb; confirmCb=null; closeModal(); if(cb) cb(); });
 $("modal-cancel").addEventListener("click", () => { confirmCb=null; closeModal(); });
 $("err-close").addEventListener("click", () => $("err-banner").classList.add("hidden"));
 
-$("photo-modal-close").addEventListener("click", () => $("photo-modal").classList.add("hidden"));
-$("photo-modal-ok").addEventListener("click", () => $("photo-modal").classList.add("hidden"));
-$("photo-modal-del").addEventListener("click", async () => {
-  if(activePhotoKey && photosState[activePhotoKey]){
-    const k=activePhotoKey;
-    delete photosState[k];
-    if(photoStoreOK) await PhotoDB.del(k);
-    saveState();
-    updatePhotoIndicators();
-    $("photo-modal").classList.add("hidden");
-    showModal("Foto Dihapus", "Foto pada item ini telah dihapus.", "🗑️");
-  }
+$("search-stok").addEventListener("input", e => {
+  const q = e.target.value.toLowerCase().trim();
+  document.querySelectorAll(".stock-row").forEach(row => {
+    row.style.display = row.dataset.name.includes(q) ? "flex" : "none";
+  });
+  document.querySelectorAll("[data-stock-group]").forEach(group => {
+    const rows = [...group.querySelectorAll(".stock-row")];
+    group.style.display = rows.some(r => r.style.display !== "none") ? "block" : "none";
+  });
+});
+$("search-pasar").addEventListener("input", e => {
+  const q = e.target.value.toLowerCase().trim();
+  document.querySelectorAll(".pasar-row").forEach(row => row.style.display = row.dataset.name.includes(q) ? "flex" : "none");
+});
+$("search-datang").addEventListener("input", e => {
+  const q = e.target.value.toLowerCase().trim();
+  document.querySelectorAll(".datang-row").forEach(row => row.style.display = row.dataset.name.includes(q) ? "flex" : "none");
 });
 
-$("global-shift").addEventListener("change", saveState);
-$("global-pos").addEventListener("change", saveState);
-$("global-date").addEventListener("change", () => {
-  if(!$("global-date").value) $("global-date").value = todayISO();
-  saveState();
-});
-$("date-today-btn").addEventListener("click", () => {
-  $("global-date").value = todayISO();
-  saveState();
-});
 $("generate-btn").addEventListener("click", generateReports);
 $("fab-generate").addEventListener("click", generateReports);
-$("download-all-photos-btn").addEventListener("click", downloadAllPhotosAsZip);
-$("reset-btn").addEventListener("click", resetShift);
+$("reset-btn").addEventListener("click", ()=>askConfirm("Kosongkan Shift?","Semua data shift ini akan dihapus.","🗑️",doReset));
+document.querySelectorAll("[data-copy]").forEach(b=>b.addEventListener("click",()=>copyText(b.dataset.copy)));
 
-document.querySelectorAll("[data-copy]").forEach(btn=>btn.addEventListener("click",()=>copyText(btn.dataset.copy)));
-$("search-stok").addEventListener("input",()=>filterRows("search-stok",".stock-row"));
-$("search-pasar").addEventListener("input",()=>filterRows("search-pasar",".pasar-row"));
-$("search-datang").addEventListener("input",()=>filterRows("search-datang",".datang-row"));
-
-/* ---------- INIT ---------- */
-async function init(){
+function init(){
   renderDynamicInputs();
-  const legacyPhotos=restoreState();
-  updateSummary();
-  setStatus();
-
-  photoStoreOK=await PhotoDB.open();
-  if(photoStoreOK) photosState=await PhotoDB.getAll();
-
-  if(legacyPhotos){
-    for(const k of Object.keys(legacyPhotos)){
-      if(!photosState[k] && typeof legacyPhotos[k]==="string"){
-        photosState[k]=legacyPhotos[k];
-        if(photoStoreOK) photoPersistOK = await PhotoDB.put(k,legacyPhotos[k]);
-      }
-    }
-  }
-
-  saveState();
-  updatePhotoIndicators();
+  restoreState();
   updateSummary();
   setStatus();
 }
-init().catch(err=>showErr(err && err.message ? err.message : String(err)));
+init();
 </script>
 </body>
 </html>
